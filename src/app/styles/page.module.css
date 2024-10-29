@@ -56,9 +56,15 @@
   font-weight: 600;
 }
 
+.header {
+  display: flex; 
+  flex-direction: row;
+  align-items: center;
+}
+
 .ctas {
   display: flex;
-  gap: 16px;
+  flex-direction: column;
 }
 
 .ctas a {
