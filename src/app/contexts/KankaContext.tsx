@@ -15,7 +15,7 @@ const KankaContext = createContext<KankaContextType | undefined>(undefined);
 export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const [status, setStatus] = useState<ConnectionStatus>('loading');
   const [error, setError] = useState<any | null>(null);
-  const [data, setData] = useState<any[]>([]);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const apiKey = process.env.NEXT_PUBLIC_API_KEY;
@@ -72,8 +72,8 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
           throw new Error(`Error fetching data from ${endpoint}`);
         }
 
-        const fetchedData = await response.json();
-        setData(fetchedData); // Store the fetched data in context
+        const { data: fetchedData } = await response.json();
+        setCampaigns(fetchedData); // Store the fetched data in context
         return fetchedData;
       } catch (err: any) {
         setError(err.message);
@@ -95,7 +95,9 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   }, [status, fetchData, loading, baseUrl]);
 
   return (
-    <KankaContext.Provider value={{ status, error, data, fetchData }}>
+    <KankaContext.Provider
+      value={{ status, error, campaigns: campaigns, fetchData }}
+    >
       {children}
     </KankaContext.Provider>
   );

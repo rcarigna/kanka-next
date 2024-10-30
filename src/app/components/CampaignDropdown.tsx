@@ -3,12 +3,9 @@ import { useKankaContext } from '../contexts/KankaContext';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 const CampaignDropdown: React.FC = () => {
-  // const { useFetchCampaignsQuery } = useKankaContext();
-  // const { data, loading } = useFetchCampaignsQuery();
+  const { campaigns: data } = useKankaContext();
 
-  const { data } = useKankaContext();
-
-  const campaigns = useMemo(() => (data ? data.data : []), [data]);
+  const campaigns = useMemo(() => (data ? data : []), [data]);
   console.log(`data in dropdown: ${JSON.stringify(data)}`);
   console.log(`campaigns in dropdown: ${JSON.stringify(campaigns)}`);
   return (

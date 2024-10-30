@@ -23,7 +23,7 @@ export type KankaItem = {
 export type KankaContextType = {
     status: ConnectionStatus;
     error: string | null;
-    data: any[];
+    campaigns: CampaignType[];
     fetchData: (endpoint: string) => Promise<any[] | null>;
 };
 
