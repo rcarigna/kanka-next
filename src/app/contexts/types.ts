@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type CampaignType = {
     id: number;
     name: string;
@@ -20,5 +21,17 @@ export type KankaItem = {
 };
 
 export type KankaContextType = {
-    data: KankaItem[];
+    status: ConnectionStatus;
+    error: string | null;
+    data: any[];
+    fetchData: (endpoint: string) => Promise<any[] | null>;
 };
+
+
+export type ConnectionType = {
+    authorization: string;
+    baseUrl: string;
+    status: ConnectionStatus;
+};
+
+export type ConnectionStatus = 'loading' | 'valid' | 'invalid';

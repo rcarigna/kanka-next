@@ -1,9 +1,44 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import Image from 'next/image';
 import styles from './styles/page.module.css';
-import Dropdown from './components/dropdown';
+import CampaignDropdown from './components/CampaignDropdown';
+import { useKankaContext } from './contexts/KankaContext';
+import { CircularProgress, Typography } from '@mui/material';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { ConnectionStatus } from './contexts/types';
+
+const Content = ({
+  status,
+  error,
+}: {
+  status: ConnectionStatus;
+  error: any;
+}) => {
+  if (status === 'loading') {
+    return (
+      <div>
+        <CircularProgress />
+        <Typography>Loading...</Typography>
+      </div>
+    );
+  }
+
+  if (status === 'invalid') {
+    return (
+      <div>
+        <ErrorOutlineIcon />
+        <Typography>Error: {error}</Typography>
+      </div>
+    );
+  }
+
+  return <CampaignDropdown />;
+};
 
 const Home: React.FC = () => {
+  const { status, error } = useKankaContext();
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -26,7 +61,7 @@ const Home: React.FC = () => {
         </div>
 
         <div className={styles.ctas}>
-          <Dropdown />
+          <Content status={status} error={error} />
         </div>
       </main>
 

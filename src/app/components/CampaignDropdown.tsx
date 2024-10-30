@@ -1,21 +1,16 @@
-// src/components/Dropdown.tsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useKankaContext } from '../contexts/KankaContext';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
-// Custom styled MUI Select component
-// const StyledSelect = styled(Select)({
-//   minWidth: 200,
-//   backgroundColor: '#f5f5f5',
-//   '& .MuiSelect-select': {
-//     padding: '10px',
-//   },
-// });
+const CampaignDropdown: React.FC = () => {
+  // const { useFetchCampaignsQuery } = useKankaContext();
+  // const { data, loading } = useFetchCampaignsQuery();
 
-const Dropdown: React.FC = () => {
   const { data } = useKankaContext();
-  console.log(`data in dropdown: ${JSON.stringify(data)}`);
 
+  const campaigns = useMemo(() => (data ? data.data : []), [data]);
+  console.log(`data in dropdown: ${JSON.stringify(data)}`);
+  console.log(`campaigns in dropdown: ${JSON.stringify(campaigns)}`);
   return (
     <FormControl>
       <InputLabel id='campaign-select-label'>
@@ -25,8 +20,8 @@ const Dropdown: React.FC = () => {
         labelId='campaign-select-label'
         label='Select your campaign to begin'
       >
-        {data?.length > 0 ? (
-          data.map((item) => (
+        {campaigns?.length > 0 ? (
+          campaigns.map((item) => (
             <MenuItem key={item.id} value={item.id}>
               {item.name}
             </MenuItem>
@@ -41,4 +36,4 @@ const Dropdown: React.FC = () => {
   );
 };
 
-export default Dropdown;
+export default CampaignDropdown;
