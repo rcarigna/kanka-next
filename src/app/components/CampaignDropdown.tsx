@@ -6,8 +6,6 @@ const CampaignDropdown: React.FC = () => {
   const { campaigns: data } = useKankaContext();
 
   const campaigns = useMemo(() => (data ? data : []), [data]);
-  console.log(`data in dropdown: ${JSON.stringify(data)}`);
-  console.log(`campaigns in dropdown: ${JSON.stringify(campaigns)}`);
   return (
     <FormControl>
       <InputLabel id='campaign-select-label'>
