@@ -10,7 +10,9 @@ import React, {
 } from 'react';
 import { ConnectionStatus, KankaContextType } from './types';
 
-const KankaContext = createContext<KankaContextType | undefined>(undefined);
+export const KankaContext = createContext<KankaContextType | undefined>(
+  undefined
+);
 
 export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const [status, setStatus] = useState<ConnectionStatus>('loading');
