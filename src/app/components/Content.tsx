@@ -1,7 +1,6 @@
 import CampaignDropdown from './CampaignDropdown';
 import { CircularProgress, Typography } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { ErrorBoundary } from 'react-error-boundary';
 import { StyledCTAs } from '../styles';
 import { useKankaContext } from '../contexts';
 
@@ -31,8 +30,6 @@ const InnerContent = () => {
 
 export const Content = () => (
   <StyledCTAs>
-    {/* <ErrorBoundary fallback={<div>something went wrong</div>}> */}
     <InnerContent />
-    {/* </ErrorBoundary> */}
   </StyledCTAs>
 );

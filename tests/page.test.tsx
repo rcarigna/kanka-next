@@ -4,11 +4,11 @@ import {
   validateConnectionType,
   fetchFromEndpointType,
 } from '../src/app/contexts/types';
+import { KankaContext } from '../src/app/contexts/KankaContext';
 import {
-  KankaContext,
   validateConnection,
   fetchFromEndpoint,
-} from '../src/app/contexts/KankaContext';
+} from '../src/app/contexts/useKankaConnection';
 import Home from '../src/app/page';
 
 describe('HomePage', () => {
