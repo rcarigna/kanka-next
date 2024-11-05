@@ -35,6 +35,20 @@ export type KankaContextType = {
 };
 
 
+export type KankaConnectionType = {
+    status: ConnectionStatus;
+    loading: boolean;
+    error: string;
+    fetchData: ({
+        endpoint,
+        save,
+    }: {
+        endpoint: string;
+        save: (value: any[]) => void;
+    }) => void;
+    campaigns: CampaignType[];
+};
+
 export type ConnectionType = {
     authorization: string;
     baseUrl: string;
@@ -50,6 +64,7 @@ export type fetchFromEndpointType = {
     commonHeaders: any;
     setError: (value: string) => void;
 };
+
 export type validateConnectionType = {
     apiKey: string;
     setError: (value: string) => void;

@@ -14,6 +14,7 @@ import {
   fetchFromEndpointType,
   KankaContextType,
   validateConnectionType,
+  KankaConnectionType,
 } from './types';
 import { KANKA_API_KEY, KANKA_BASE_URL } from './constants';
 
@@ -28,7 +29,6 @@ export const validateConnection = async ({
   commonHeaders,
   baseUrl,
 }: validateConnectionType) => {
-  console.log(`in external validateConnection function`);
   if (!apiKey) {
     setError('API key is missing');
     setStatus('invalid');
@@ -78,15 +78,13 @@ export const fetchFromEndpoint = async ({
   }
 };
 
-export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
+export const useKankaConnection = (): KankaConnectionType => {
   const [status, setStatus] = useState<ConnectionStatus>('loading');
   const [error, setError] = useState<any | null>(null);
-  const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
   const [loading, setLoading] = useState(true);
 
   const apiKey = KANKA_API_KEY;
   const baseUrl = KANKA_BASE_URL;
-
   const commonHeaders = useMemo(
     () => ({
       Authorization: `Bearer ${apiKey}`,
@@ -107,7 +105,6 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [apiKey, baseUrl, commonHeaders]);
 
-  // Fetch data function available to consumers
   const fetchData = useCallback(
     ({
       endpoint,
@@ -126,23 +123,95 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
         }).then((result: any[] | null) => {
           if (result) {
             save(result);
+            setLoading(false);
           }
         });
       }
     },
     [baseUrl, commonHeaders, status]
   );
-
+  const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
   useEffect(() => {
     const loadCampaignOptions = async () => {
       if (status === 'valid' && loading) {
         fetchData({ endpoint: `/campaigns`, save: setCampaigns });
-        setLoading(false);
       }
     };
-
     loadCampaignOptions();
-  }, [status, fetchData, loading, baseUrl]);
+  }, [status, fetchData, loading]);
+  return {
+    status: status,
+    loading: loading,
+    error: error,
+    fetchData: fetchData,
+    campaigns: campaigns,
+  };
+};
+
+export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
+  // const [status, setStatus] = useState<ConnectionStatus>('loading');
+  // const [error, setError] = useState<any | null>(null);
+  // const [loading, setLoading] = useState(true);
+
+  // const apiKey = KANKA_API_KEY;
+  // const baseUrl = KANKA_BASE_URL;
+  // const commonHeaders = useMemo(
+  //   () => ({
+  //     Authorization: `Bearer ${apiKey}`,
+  //     'Content-type': 'application/json',
+  //   }),
+  //   [apiKey]
+  // );
+
+  // const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
+
+  // useEffect(() => {
+  //   if (apiKey && baseUrl) {
+  //     validateConnection({
+  //       apiKey,
+  //       setError,
+  //       setStatus,
+  //       commonHeaders,
+  //       baseUrl,
+  //     });
+  //   }
+  // }, [apiKey, baseUrl, commonHeaders]);
+
+  // // Fetch data function available to consumers
+  // const fetchData = useCallback(
+  //   ({
+  //     endpoint,
+  //     save,
+  //   }: {
+  //     endpoint: string;
+  //     save: (value: any[]) => void;
+  //   }) => {
+  //     if (baseUrl) {
+  //       fetchFromEndpoint({
+  //         status,
+  //         endpoint,
+  //         baseUrl,
+  //         commonHeaders,
+  //         setError,
+  //       }).then((result: any[] | null) => {
+  //         if (result) {
+  //           save(result);
+  //         }
+  //       });
+  //     }
+  //   },
+  //   [baseUrl, commonHeaders, status]
+  // );
+  const { status, error, fetchData, campaigns } = useKankaConnection();
+
+  // useEffect(() => {
+  //   const loadCampaignOptions = async () => {
+  //     if (status === 'valid' && loading) {
+  //       fetchData({ endpoint: `/campaigns`, save: setCampaigns });
+  //     }
+  //   };
+  //   loadCampaignOptions();
+  // }, [status, fetchData, loading]);
 
   return (
     <KankaContext.Provider

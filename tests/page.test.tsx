@@ -72,6 +72,7 @@ describe('HomePage', () => {
     global.fetch = fetchMock;
 
     const validateConnectionProps: validateConnectionType = {
+      // @ts-expect-error: this test is covering the scenario in which there is no key
       apiKey: undefined,
       setError: jest.fn(),
       setStatus: jest.fn(),
