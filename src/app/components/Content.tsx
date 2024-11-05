@@ -1,31 +1,34 @@
 import CampaignDropdown from './CampaignDropdown';
-import { CircularProgress, Typography } from '@mui/material';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { Login } from './Login';
+import { CircularProgress, Typography, Alert, Button } from '@mui/material';
+// import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { StyledCTAs } from '../styles';
 import { useKankaContext } from '../contexts';
 
 const InnerContent = () => {
-  const { status, error } = useKankaContext();
-
-  if (status === 'loading') {
-    return (
-      <div>
-        <CircularProgress />
-        <Typography>Loading...</Typography>
-      </div>
-    );
+  const { connection, error } = useKankaContext().connection;
+  const { status } = connection;
+  switch (status) {
+    case 'loading':
+      return (
+        <div>
+          <CircularProgress />
+          <Typography>Loading...</Typography>
+        </div>
+      );
+    case 'invalid':
+      return (
+        <>
+          <Alert severity='error'>{error}</Alert>
+          <Button onClick={connection.clearApiKey}>Try again?</Button>
+        </>
+      );
+    case 'apiKeyMissing':
+      return <Login />;
+    case 'valid':
+    default:
+      return <CampaignDropdown />;
   }
-
-  if (status === 'invalid') {
-    return (
-      <div>
-        <ErrorOutlineIcon />
-        <Typography>Error: {error}</Typography>
-      </div>
-    );
-  }
-
-  return <CampaignDropdown />;
 };
 
 export const Content = () => (

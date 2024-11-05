@@ -21,22 +21,21 @@ export type KankaItem = {
 };
 
 export type KankaContextType = {
-    status: ConnectionStatus;
-    error: string | null;
+    connection: KankaConnectionType;
     campaigns?: CampaignType[];
-    // fetchData: (endpoint: string) => Promise<any[] | null>;
-    fetchData: ({
-        endpoint,
-        save,
-    }: {
-        endpoint: string;
-        save: (value: any[]) => void;
-    }) => void;
 };
 
 
-export type KankaConnectionType = {
+export type ConnectionType = {
+    apiKey: string | undefined;
+    setApiKey: (value: string | undefined) => void;
+    clearApiKey: () => void;
+    baseUrl: string;
     status: ConnectionStatus;
+};
+
+export type KankaConnectionType = {
+    connection: ConnectionType;
     loading: boolean;
     error: string;
     fetchData: ({
@@ -46,16 +45,10 @@ export type KankaConnectionType = {
         endpoint: string;
         save: (value: any[]) => void;
     }) => void;
-    campaigns: CampaignType[];
 };
 
-export type ConnectionType = {
-    authorization: string;
-    baseUrl: string;
-    status: ConnectionStatus;
-};
 
-export type ConnectionStatus = 'loading' | 'valid' | 'invalid';
+export type ConnectionStatus = 'loading' | 'valid' | 'invalid' | 'apiKeyMissing';
 
 export type fetchFromEndpointType = {
     status: ConnectionStatus;

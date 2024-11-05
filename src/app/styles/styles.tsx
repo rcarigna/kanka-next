@@ -85,7 +85,6 @@ export const StyledCTAs = styled.div`
   a {
     appearance: none;
     border-radius: 128px;
-    height: 48px;
     padding: 0 20px;
     border: none;
     border: 1px solid transparent;
@@ -94,7 +93,6 @@ export const StyledCTAs = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
     line-height: 20px;
     font-weight: 500;
     @media (max-width: 600px) {

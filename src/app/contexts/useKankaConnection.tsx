@@ -5,6 +5,7 @@ import {
   fetchFromEndpointType,
   validateConnectionType,
   KankaConnectionType,
+  ConnectionType,
 } from './types';
 import { KANKA_API_KEY, KANKA_BASE_URL } from './constants';
 
@@ -66,11 +67,22 @@ export const fetchFromEndpoint = async ({
 
 export const useKankaConnection = (): KankaConnectionType => {
   const [status, setStatus] = useState<ConnectionStatus>('loading');
+
   const [error, setError] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [apiKey, setApiKey] = useState<string | undefined>(undefined);
+  const [baseUrl, setBaseUrl] = useState<string>('https://api.kanka.io/1.0');
 
-  const apiKey = KANKA_API_KEY;
-  const baseUrl = KANKA_BASE_URL;
+  const clearApiKey = () => {
+    setApiKey(undefined);
+    setStatus('apiKeyMissing');
+  };
+
+  const connection: ConnectionType = useMemo(
+    () => ({ apiKey, setApiKey, clearApiKey, baseUrl, status }),
+    [apiKey, baseUrl, status]
+  );
+
   const commonHeaders = useMemo(
     () => ({
       Authorization: `Bearer ${apiKey}`,
@@ -79,6 +91,20 @@ export const useKankaConnection = (): KankaConnectionType => {
     [apiKey]
   );
 
+  // load the apiKey & baseUrl
+  useEffect(() => {
+    if (!apiKey && KANKA_API_KEY) {
+      setApiKey(KANKA_API_KEY);
+    }
+    if (!apiKey && !KANKA_API_KEY) {
+      setStatus('apiKeyMissing');
+    }
+    if (KANKA_BASE_URL && KANKA_BASE_URL !== baseUrl) {
+      setBaseUrl(KANKA_BASE_URL);
+    }
+  }, []);
+
+  // once the apiKey & baseUrl are loaded, validate the connection
   useEffect(() => {
     if (apiKey && baseUrl) {
       validateConnection({
@@ -116,20 +142,11 @@ export const useKankaConnection = (): KankaConnectionType => {
     },
     [baseUrl, commonHeaders, status]
   );
-  const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
-  useEffect(() => {
-    const loadCampaignOptions = async () => {
-      if (status === 'valid' && loading) {
-        fetchData({ endpoint: `/campaigns`, save: setCampaigns });
-      }
-    };
-    loadCampaignOptions();
-  }, [status, fetchData, loading]);
+
   return {
-    status: status,
+    connection: connection,
     loading: loading,
     error: error,
     fetchData: fetchData,
-    campaigns: campaigns,
   };
 };
