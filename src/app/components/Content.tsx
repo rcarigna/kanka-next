@@ -1,17 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import CampaignDropdown from './CampaignDropdown';
 import { CircularProgress, Typography } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { ConnectionStatus } from '../contexts/types';
+import { ErrorBoundary } from 'react-error-boundary';
+import { StyledCTAs } from '../styles';
+import { useKankaContext } from '../contexts';
 
-export const Content = ({
-  status,
-  error,
-}: {
-  status: ConnectionStatus;
-  error: any;
-}) => {
+const InnerContent = () => {
+  const { status, error } = useKankaContext();
+
   if (status === 'loading') {
     return (
       <div>
@@ -32,3 +28,11 @@ export const Content = ({
 
   return <CampaignDropdown />;
 };
+
+export const Content = () => (
+  <StyledCTAs>
+    {/* <ErrorBoundary fallback={<div>something went wrong</div>}> */}
+    <InnerContent />
+    {/* </ErrorBoundary> */}
+  </StyledCTAs>
+);

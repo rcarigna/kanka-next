@@ -5,36 +5,37 @@ import { ConnectionStatus, KankaContextType } from '@/app/contexts/types';
 import { KankaContext } from '../src/app/contexts/KankaContext';
 
 describe('Content', () => {
-  const props: {
-    status: ConnectionStatus;
-    error: any;
-  } = {
+  const props: KankaContextType = {
     status: 'loading',
     error: '',
+    fetchData: jest.fn(),
+    campaigns: [],
   };
   it('renders a loading page', async () => {
-    render(<Content {...props} />);
+    render(
+      <KankaContext.Provider value={props}>
+        <Content />
+      </KankaContext.Provider>
+    );
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
   it('renders an error page', async () => {
-    render(<Content {...{ ...props, status: 'invalid' }} />);
+    render(
+      <KankaContext.Provider value={{ ...props, status: 'invalid' }}>
+        <Content />
+      </KankaContext.Provider>
+    );
     expect(screen.getByText(/Error/)).toBeInTheDocument();
   });
   it('renders an error if no provider is given', () => {
-    expect(() =>
-      render(<Content {...{ ...props, status: 'valid' }} />)
-    ).toThrow('useKankaContext must be used within a DataProvider');
+    expect(() => render(<Content />)).toThrow(
+      'useKankaContext must be used within a DataProvider'
+    );
   });
   it('renders a valid page', async () => {
-    const providerProps: KankaContextType = {
-      status: 'valid',
-      error: '',
-      fetchData: jest.fn(),
-      campaigns: [],
-    };
     render(
-      <KankaContext.Provider value={providerProps}>
-        <Content {...{ ...props, status: 'valid' }} />
+      <KankaContext.Provider value={{ ...props, status: 'valid' }}>
+        <Content />
       </KankaContext.Provider>
     );
     expect(
