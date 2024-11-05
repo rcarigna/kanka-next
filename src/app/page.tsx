@@ -2,39 +2,9 @@
 'use client';
 import Image from 'next/image';
 import styles from './styles/page.module.css';
-import CampaignDropdown from './components/CampaignDropdown';
 import { useKankaContext } from './contexts/KankaContext';
-import { CircularProgress, Typography } from '@mui/material';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { ConnectionStatus } from './contexts/types';
-
-const Content = ({
-  status,
-  error,
-}: {
-  status: ConnectionStatus;
-  error: any;
-}) => {
-  if (status === 'loading') {
-    return (
-      <div>
-        <CircularProgress />
-        <Typography>Loading...</Typography>
-      </div>
-    );
-  }
-
-  if (status === 'invalid') {
-    return (
-      <div>
-        <ErrorOutlineIcon />
-        <Typography>Error: {error}</Typography>
-      </div>
-    );
-  }
-
-  return <CampaignDropdown />;
-};
+import { ErrorBoundary } from 'react-error-boundary';
+import { Content } from './components/Content';
 
 const Home: React.FC = () => {
   const { status, error } = useKankaContext();
@@ -61,7 +31,9 @@ const Home: React.FC = () => {
         </div>
 
         <div className={styles.ctas}>
-          <Content status={status} error={error} />
+          <ErrorBoundary fallback={<div>something went wrong</div>}>
+            <Content status={status} error={error} />
+          </ErrorBoundary>
         </div>
       </main>
 

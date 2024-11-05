@@ -106,7 +106,7 @@ describe('CampaignDropdown', () => {
     await userEvent.click(
       screen.getByLabelText('Select your campaign to begin')
     );
-    props.campaigns.forEach((element) => {
+    props.campaigns?.forEach((element) => {
       expect(screen.getByText(element.name)).toBeInTheDocument();
     });
   });

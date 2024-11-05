@@ -47,6 +47,8 @@
     "eslint-config-next": "15.0.1",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "jest-fetch-mock": "^3.0.3",
+    "react-error-boundary": "^4.1.2",
     "react-test-renderer": "^18.3.1",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",

@@ -23,8 +23,15 @@ export type KankaItem = {
 export type KankaContextType = {
     status: ConnectionStatus;
     error: string | null;
-    campaigns: CampaignType[];
-    fetchData: (endpoint: string) => Promise<any[] | null>;
+    campaigns?: CampaignType[];
+    // fetchData: (endpoint: string) => Promise<any[] | null>;
+    fetchData: ({
+        endpoint,
+        save,
+    }: {
+        endpoint: string;
+        save: (value: any[]) => void;
+    }) => void;
 };
 
 
@@ -35,3 +42,18 @@ export type ConnectionType = {
 };
 
 export type ConnectionStatus = 'loading' | 'valid' | 'invalid';
+
+export type fetchFromEndpointType = {
+    status: ConnectionStatus;
+    endpoint: string;
+    baseUrl: string;
+    commonHeaders: any;
+    setError: (value: string) => void;
+};
+export type validateConnectionType = {
+    apiKey: string;
+    setError: (value: string) => void;
+    setStatus: (value: ConnectionStatus) => void;
+    commonHeaders: any;
+    baseUrl: string;
+};

@@ -8,20 +8,84 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { ConnectionStatus, KankaContextType } from './types';
+import {
+  CampaignType,
+  ConnectionStatus,
+  fetchFromEndpointType,
+  KankaContextType,
+  validateConnectionType,
+} from './types';
+import { KANKA_API_KEY, KANKA_BASE_URL } from './constants';
 
 export const KankaContext = createContext<KankaContextType | undefined>(
   undefined
 );
 
+export const validateConnection = async ({
+  apiKey,
+  setError,
+  setStatus,
+  commonHeaders,
+  baseUrl,
+}: validateConnectionType) => {
+  console.log(`in external validateConnection function`);
+  if (!apiKey) {
+    setError('API key is missing');
+    setStatus('invalid');
+    return;
+  }
+
+  try {
+    const response = await fetch(`${baseUrl}/campaigns`, {
+      headers: commonHeaders,
+    });
+
+    if (response.ok) {
+      setStatus('valid');
+    } else {
+      setStatus('invalid');
+      setError(`Error fetching from ${baseUrl}/campaigns.`);
+    }
+  } catch {
+    setStatus('invalid');
+    setError('Failed to validate connection');
+  }
+};
+
+export const fetchFromEndpoint = async ({
+  status,
+  endpoint,
+  baseUrl,
+  commonHeaders,
+  setError,
+}: fetchFromEndpointType): Promise<any[] | null> => {
+  if (status !== 'valid') return null;
+
+  try {
+    const response = await fetch(`${baseUrl}${endpoint}`, {
+      headers: commonHeaders,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching data from ${endpoint}`);
+    }
+
+    const { data: fetchedData } = await response.json();
+    return fetchedData;
+  } catch (err: any) {
+    setError(err.message);
+    return null;
+  }
+};
+
 export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const [status, setStatus] = useState<ConnectionStatus>('loading');
   const [error, setError] = useState<any | null>(null);
-  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const apiKey = KANKA_API_KEY;
+  const baseUrl = KANKA_BASE_URL;
 
   const commonHeaders = useMemo(
     () => ({
@@ -31,55 +95,39 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     [apiKey]
   );
 
-  // Initial connection validation
   useEffect(() => {
-    const validateConnection = async () => {
-      if (!apiKey) {
-        setError('API key is missing');
-        setStatus('invalid');
-        return;
-      }
-
-      try {
-        const response = await fetch(`${baseUrl}/campaigns`, {
-          headers: commonHeaders,
-        });
-
-        if (response.ok) {
-          setStatus('valid');
-        } else {
-          setStatus('invalid');
-          setError('Invalid API key');
-        }
-      } catch {
-        setStatus('invalid');
-        setError('Failed to validate connection');
-      }
-    };
-
-    validateConnection();
+    if (apiKey && baseUrl) {
+      validateConnection({
+        apiKey,
+        setError,
+        setStatus,
+        commonHeaders,
+        baseUrl,
+      });
+    }
   }, [apiKey, baseUrl, commonHeaders]);
 
   // Fetch data function available to consumers
   const fetchData = useCallback(
-    async (endpoint: string): Promise<any[] | null> => {
-      if (status !== 'valid') return null;
-
-      try {
-        const response = await fetch(`${baseUrl}${endpoint}`, {
-          headers: commonHeaders,
+    ({
+      endpoint,
+      save,
+    }: {
+      endpoint: string;
+      save: (value: any[]) => void;
+    }) => {
+      if (baseUrl) {
+        fetchFromEndpoint({
+          status,
+          endpoint,
+          baseUrl,
+          commonHeaders,
+          setError,
+        }).then((result: any[] | null) => {
+          if (result) {
+            save(result);
+          }
         });
-
-        if (!response.ok) {
-          throw new Error(`Error fetching data from ${endpoint}`);
-        }
-
-        const { data: fetchedData } = await response.json();
-        setCampaigns(fetchedData); // Store the fetched data in context
-        return fetchedData;
-      } catch (err: any) {
-        setError(err.message);
-        return null;
       }
     },
     [baseUrl, commonHeaders, status]
@@ -88,7 +136,7 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const loadCampaignOptions = async () => {
       if (status === 'valid' && loading) {
-        await fetchData(`/campaigns`);
+        fetchData({ endpoint: `/campaigns`, save: setCampaigns });
         setLoading(false);
       }
     };
