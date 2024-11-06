@@ -70,4 +70,21 @@ describe('Content', () => {
       screen.getByLabelText('Select your campaign to begin')
     ).toBeInTheDocument();
   });
+
+  it('renders a login page', async () => {
+    const loginConnection: ConnectionType = {
+      ...props.connection.connection,
+      status: 'apiKeyMissing',
+    };
+    const loginProps = {
+      ...props,
+      connection: { ...props.connection, connection: loginConnection },
+    };
+    render(
+      <KankaContext.Provider value={loginProps}>
+        <Content />
+      </KankaContext.Provider>
+    );
+    expect(screen.getByLabelText('Please provide API key')).toBeInTheDocument();
+  });
 });

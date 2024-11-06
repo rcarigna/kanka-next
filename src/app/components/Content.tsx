@@ -1,7 +1,6 @@
 import CampaignDropdown from './CampaignDropdown';
 import { Login } from './Login';
 import { CircularProgress, Typography, Alert, Button } from '@mui/material';
-// import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { StyledCTAs } from '../styles';
 import { useKankaContext } from '../contexts';
 

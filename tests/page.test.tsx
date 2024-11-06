@@ -183,7 +183,7 @@ describe('HomePage', () => {
     await waitFor(() => expect(result).toBe(null));
   });
 
-  it('attempts to fetch from an end point', async () => {
+  it('fetches from an end point', async () => {
     const setErrorMock = jest.fn();
     global.fetch = fetchMock;
     const fetchFromEndpointProps: fetchFromEndpointType = {
