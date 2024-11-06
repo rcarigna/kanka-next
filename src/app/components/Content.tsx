@@ -1,12 +1,15 @@
-import CampaignDropdown from './CampaignDropdown';
+'use client';
+import { CampaignsPanel } from './CampaignsPanel';
 import { Login } from './Login';
 import { CircularProgress, Typography, Alert, Button } from '@mui/material';
 import { StyledCTAs } from '../styles';
 import { useKankaContext } from '../contexts';
 
 const InnerContent = () => {
-  const { connection, error } = useKankaContext().connection;
+  const { connection: kankaConnection, campaigns } = useKankaContext();
+  const { connection, error } = kankaConnection;
   const { status } = connection;
+
   switch (status) {
     case 'loading':
       return (
@@ -26,7 +29,7 @@ const InnerContent = () => {
       return <Login />;
     case 'valid':
     default:
-      return <CampaignDropdown />;
+      return <CampaignsPanel campaigns={campaigns || []} />;
   }
 };
 

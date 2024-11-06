@@ -14,8 +14,7 @@ export const StyledPage = styled.div`
   align-items: center;
   justify-items: center;
   min-height: 100svh;
-  padding: 80px;
-  gap: 64px;
+  padding: 40px;
   font-family: var(--font-geist-sans);
 
   a.primary {
@@ -77,6 +76,7 @@ export const StyledHeader = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
 `;
 
 export const StyledCTAs = styled.div`
@@ -85,10 +85,12 @@ export const StyledCTAs = styled.div`
   a {
     appearance: none;
     border-radius: 128px;
-    padding: 0 20px;
     border: none;
     border: 1px solid transparent;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      border-color 0.2s;
     cursor: pointer;
     display: flex;
     align-items: center;

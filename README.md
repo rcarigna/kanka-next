@@ -25,7 +25,7 @@ renee carignan github.com/rcarigna
 
 ## installation
 
-pull down this repository & run `npm run build` in the `kanka-next` application directory
+pull down this repository & run `npm install` & `npm run build` in the `kanka-next` application directory
 
 ## feedback and contribution
 
