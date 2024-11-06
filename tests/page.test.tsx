@@ -33,13 +33,24 @@ describe('HomePage', () => {
     Promise.reject(new Error('Some API error'))
   ) as jest.Mock;
   const props: KankaContextType = {
-    status: 'loading',
-    error: null,
-    fetchData: fetchMock,
-    campaigns: [],
+    connection: {
+      connection: {
+        apiKey: 'someKey',
+        setApiKey: (value) => (props.connection.connection.apiKey = value),
+        clearApiKey: () => {
+          props.connection.connection.apiKey = undefined;
+          props.connection.connection.status = 'valid';
+        },
+        baseUrl: 'someUrl',
+        status: 'loading',
+      },
+      loading: false,
+      error: '',
+      fetchData: fetchMock,
+    },
   };
 
-  it('renders an error if it receives one', async () => {
+  it('renders loading', async () => {
     render(
       <KankaContext.Provider value={{ ...props }}>
         <Home />
