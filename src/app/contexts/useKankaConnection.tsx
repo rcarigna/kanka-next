@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  CampaignType,
   ConnectionStatus,
   fetchFromEndpointType,
   validateConnectionType,
@@ -102,7 +102,7 @@ export const useKankaConnection = (): KankaConnectionType => {
     if (KANKA_BASE_URL && KANKA_BASE_URL !== baseUrl) {
       setBaseUrl(KANKA_BASE_URL);
     }
-  }, []);
+  }, [apiKey, baseUrl]);
 
   // once the apiKey & baseUrl are loaded, validate the connection
   useEffect(() => {

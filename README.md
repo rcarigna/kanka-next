@@ -1,36 +1,32 @@
+
+# kanka-next
+
+## Highlights
+
+- connect to your kanka account and view your campaigns
+- flexible, modern ui built with typescript, react, nextjs, mui, and styled components
+
+## overview
+
+a software developer by day, a writer and dm by night, i have often searched for a way to intuitively store my notes and session summaries, and share them with my players.
+
+kanka.io is a dream come true! such incredible capabilities with capacity for customization. i wanted to see what it would look like in react. et voila.
+
+## authors
+
+renee carignan github.com/rcarigna
+
+## usage
+
+0. (optional) add your kanka api key to a `.env` file in the `kanka-next` application directory with the variable name `NEXT_PUBLIC_API_KEY`
+1. run the development server with `npm run dev` in the `kanka-next` application directory
+2. enter your kanka api key if it is not present in the `.env`
+3. you should be presented with the campaigns you are a member of.
+
+## installation
+
+pull down this repository & run `npm run build` in the `kanka-next` application directory
+
+## feedback and contribution
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
