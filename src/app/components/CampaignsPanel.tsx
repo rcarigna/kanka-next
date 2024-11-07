@@ -7,13 +7,12 @@ export const CampaignsPanel = ({
 }: {
   campaigns: CampaignType[];
 }) => {
-  const campaignPreviews =
-    campaigns?.map((campaign) => (
-      <CampaignPreview
-        key={`campaign-panel-preview-${campaign.id}`}
-        campaign={campaign}
-      />
-    )) || [];
+  const campaignPreviews = campaigns?.map((campaign) => (
+    <CampaignPreview
+      key={`campaign-panel-preview-${campaign.id}`}
+      campaign={campaign}
+    />
+  ));
 
   return (
     <EntityGrid
