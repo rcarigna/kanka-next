@@ -1,6 +1,7 @@
 import React from 'react';
-import { Paper, Grid2 as Grid } from '@mui/material';
+import { Grid2 as Grid } from '@mui/material';
 import { EntityGridProps } from '../contexts';
+import { StyledCard } from './styles';
 
 export const EntityGrid: React.FC<EntityGridProps> = ({
   entities,
@@ -10,9 +11,16 @@ export const EntityGrid: React.FC<EntityGridProps> = ({
     <Grid data-testid={dataTestId} container spacing={2}>
       {entities.map((entity, index) => (
         <Grid key={index}>
-          <Paper elevation={3} sx={{ padding: 2, textAlign: 'center' }}>
+          <StyledCard
+            elevation={3}
+            sx={{ padding: 2, textAlign: 'center' }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.transform = 'scale(1.05)')
+            }
+            onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          >
             {entity}
-          </Paper>
+          </StyledCard>
         </Grid>
       ))}
     </Grid>

@@ -1,3 +1,4 @@
+import { Paper } from '@mui/material';
 import styled from 'styled-components';
 
 export const StyledCTAs = styled.div`
@@ -38,4 +39,12 @@ export const StyledHelperLink = styled.div`
   align-content: start;
   flex-direction: row;
   font-size: 10px;
+`;
+
+export const StyledCard = styled(Paper)`
+  padding: '20px',
+  textAlign: 'center',
+  borderRadius: '8px',
+  border: '1px solid #e0e0e0',
+  transition: 'transform 0.2s ease-in-out',
 `;

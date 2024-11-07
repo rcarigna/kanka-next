@@ -14,8 +14,9 @@ export const StyledPage = styled.div`
   align-items: center;
   justify-items: center;
   min-height: 100svh;
-  padding: 40px;
+  padding: 20px;
   font-family: var(--font-geist-sans);
+  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
 
   a.primary {
     background: var(--foreground);

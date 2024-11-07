@@ -2,6 +2,7 @@ import { Typography, Link } from '@mui/material';
 import { OpenInNew } from '@mui/icons-material';
 import { CampaignType } from '../../contexts';
 import { StyledPanel } from './styles';
+
 export const CampaignPreview = ({
   campaign,
 }: {
