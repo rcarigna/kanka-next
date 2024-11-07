@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { PageWrapper } from '../src/app/components';
+import { PageWrapper } from './PageWrapper';
 
 describe('PageWrapper', () => {
   it('renders the icons', async () => {

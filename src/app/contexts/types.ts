@@ -65,3 +65,8 @@ export type validateConnectionType = {
     commonHeaders: any;
     baseUrl: string;
 };
+
+export type EntityGridProps = {
+    entities: JSX.Element[];
+    dataTestId?: string;
+};

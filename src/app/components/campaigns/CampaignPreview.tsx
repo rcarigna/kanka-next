@@ -1,13 +1,7 @@
 import { Typography, Link } from '@mui/material';
 import { OpenInNew } from '@mui/icons-material';
 import { CampaignType } from '../../contexts';
-import styled from 'styled-components';
-
-const StyledPanel = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 5px;
-`;
+import { StyledPanel } from './styles';
 export const CampaignPreview = ({
   campaign,
 }: {

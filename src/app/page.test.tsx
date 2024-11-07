@@ -3,13 +3,13 @@ import {
   KankaContextType,
   validateConnectionType,
   fetchFromEndpointType,
-} from '../src/app/contexts/types';
-import { KankaContext } from '../src/app/contexts/KankaContext';
+} from './contexts/types';
+import { KankaContext } from './contexts/KankaContext';
 import {
   validateConnection,
   fetchFromEndpoint,
-} from '../src/app/contexts/useKankaConnection';
-import Home from '../src/app/page';
+} from './contexts/useKankaConnection';
+import Home from './page';
 
 describe('HomePage', () => {
   afterEach(() => jest.clearAllMocks());
@@ -17,7 +17,6 @@ describe('HomePage', () => {
     Promise.resolve({
       ok: true,
       json: () => {
-        console.log(`in json()`);
         return Promise.resolve({
           data: [{ id: 1, name: 'Waterdhavian Webs' }],
         });

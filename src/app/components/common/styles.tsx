@@ -79,32 +79,6 @@ export const StyledHeader = styled.div`
   justify-content: center;
 `;
 
-export const StyledCTAs = styled.div`
-  display: flex;
-  flex-direction: column;
-  a {
-    appearance: none;
-    border-radius: 128px;
-    border: none;
-    border: 1px solid transparent;
-    transition:
-      background 0.2s,
-      color 0.2s,
-      border-color 0.2s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 20px;
-    font-weight: 500;
-    @media (max-width: 600px) {
-      font-size: 14px;
-      height: 40px;
-      padding: 0 16px;
-    }
-  }
-`;
-
 export const StyledFooter = styled.footer`
   grid-row-start: 3;
   display: flex;

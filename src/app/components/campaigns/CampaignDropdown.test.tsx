@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { KankaContextType } from '../src/app/contexts/types';
-import CampaignDropdown from '../src/app/components/campaigns/CampaignDropdown';
-import { KankaContext } from '../src/app/contexts/KankaContext';
+import { KankaContextType } from '../../contexts/types';
+import CampaignDropdown from './CampaignDropdown';
+import { KankaContext } from '../../contexts/KankaContext';
 
 describe('CampaignDropdown', () => {
   const props: KankaContextType = {

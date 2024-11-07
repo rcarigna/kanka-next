@@ -1,4 +1,4 @@
-import { StyledHeader, StyledLogo } from '../../styles';
+import { StyledHeader, StyledLogo } from './styles';
 export const Header = () => (
   <StyledHeader>
     <StyledLogo

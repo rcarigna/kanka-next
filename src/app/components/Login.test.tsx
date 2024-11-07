@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Login } from '../src/app/components/Login';
-import { KankaContextType, KankaContext } from '../src/app/contexts';
+import { Login } from './Login';
+import { KankaContextType, KankaContext } from '../contexts';
 
 describe('<Login />', () => {
   const mockFn = jest.fn();
