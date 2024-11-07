@@ -1,5 +1,5 @@
 'use client';
-import { CampaignsPanel } from './CampaignsPanel';
+import { CampaignsPanel } from './campaigns';
 import { Login } from './Login';
 import { CircularProgress, Typography, Alert, Button } from '@mui/material';
 import { StyledCTAs } from '../styles';

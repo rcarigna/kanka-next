@@ -1,6 +1,6 @@
-import { CampaignType } from '../contexts';
+import { CampaignType } from '../../contexts';
 import { CampaignPreview } from './CampaignPreview';
-import { EntityGrid } from './EntityGrid';
+import { EntityGrid } from '../EntityGrid';
 
 export const CampaignsPanel = ({
   campaigns,

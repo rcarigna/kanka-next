@@ -1,4 +1,4 @@
-import { StyledFooter, StyledLogo } from '../styles';
+import { StyledFooter, StyledLogo } from '../../styles';
 
 export const Footer = () => (
   <StyledFooter>

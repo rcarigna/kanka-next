@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { campaigns } from './constants-mocks';
-import { CampaignPreview } from '../src/app/components/CampaignPreview';
+import { CampaignPreview } from '../src/app/components/campaigns/CampaignPreview';
 
 describe('CampaignPreview', () => {
   it('renders a summary', async () => {

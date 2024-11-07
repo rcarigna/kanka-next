@@ -1,6 +1,6 @@
 'use client';
 import { PageWrapper } from '../components';
-import { CampaignsPanel } from '../components/CampaignsPanel';
+import { CampaignsPanel } from '../components/campaigns/CampaignsPanel';
 import { useKankaContext } from '../contexts';
 const Campaigns: React.FC = () => {
   const { campaigns } = useKankaContext();
