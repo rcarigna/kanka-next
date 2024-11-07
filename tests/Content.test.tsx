@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { render, screen } from '@testing-library/react';
 import { Content } from '../src/app/components/Content';
 import { ConnectionType, KankaContextType } from '@/app/contexts/types';
@@ -68,6 +67,7 @@ describe('Content', () => {
       'useKankaContext must be used within a DataProvider'
     );
   });
+
   it('renders a valid page', async () => {
     const validConnection: ConnectionType = {
       ...props.connection.connection,
@@ -82,7 +82,9 @@ describe('Content', () => {
         <Content />
       </KankaContext.Provider>
     );
-    expect(screen.getByText(props.campaigns[0].name)).toBeInTheDocument();
+    if (props.campaigns) {
+      expect(screen.getByText(props.campaigns[0].name)).toBeInTheDocument();
+    }
   });
 
   it('renders a login page', async () => {
@@ -100,5 +102,45 @@ describe('Content', () => {
       </KankaContext.Provider>
     );
     expect(screen.getByLabelText('Please provide API key')).toBeInTheDocument();
+  });
+
+  it('renders a valid page even if they do not have any campaigns', async () => {
+    const validConnection: ConnectionType = {
+      ...props.connection.connection,
+      status: 'valid',
+    };
+    const validProps = {
+      ...props,
+      campaigns: [],
+      connection: { ...props.connection, connection: validConnection },
+    };
+    render(
+      <KankaContext.Provider value={validProps}>
+        <Content />
+      </KankaContext.Provider>
+    );
+    expect(
+      screen.getByTestId('entity-grid-campaigns-panel')
+    ).toBeInTheDocument();
+  });
+
+  it('renders a valid page even if they do not have any campaigns', async () => {
+    const validConnection: ConnectionType = {
+      ...props.connection.connection,
+      status: 'valid',
+    };
+    const validProps = {
+      ...props,
+      campaigns: undefined,
+      connection: { ...props.connection, connection: validConnection },
+    };
+    render(
+      <KankaContext.Provider value={validProps}>
+        <Content />
+      </KankaContext.Provider>
+    );
+    expect(
+      screen.getByTestId('entity-grid-campaigns-panel')
+    ).toBeInTheDocument();
   });
 });

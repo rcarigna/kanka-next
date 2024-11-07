@@ -15,5 +15,10 @@ export const CampaignsPanel = ({
       />
     )) || [];
 
-  return <EntityGrid entities={campaignPreviews} />;
+  return (
+    <EntityGrid
+      dataTestId='entity-grid-campaigns-panel'
+      entities={campaignPreviews}
+    />
+  );
 };
