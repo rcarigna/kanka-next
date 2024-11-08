@@ -9,62 +9,6 @@ import {
 } from './types';
 import { KANKA_API_KEY, KANKA_BASE_URL } from './constants';
 
-export const validateConnection = async ({
-  apiKey,
-  setError,
-  setStatus,
-  commonHeaders,
-  baseUrl,
-}: validateConnectionType) => {
-  if (!apiKey) {
-    setError('API key is missing');
-    setStatus('invalid');
-    return;
-  }
-
-  try {
-    const response = await fetch(`${baseUrl}/campaigns`, {
-      headers: commonHeaders,
-    });
-
-    if (response.ok) {
-      setStatus('valid');
-    } else {
-      setStatus('invalid');
-      setError(`Error fetching from ${baseUrl}/campaigns.`);
-    }
-  } catch {
-    setStatus('invalid');
-    setError('Failed to validate connection');
-  }
-};
-
-export const fetchFromEndpoint = async ({
-  status,
-  endpoint,
-  baseUrl,
-  commonHeaders,
-  setError,
-}: fetchFromEndpointType): Promise<any[] | null> => {
-  if (status !== 'valid') return null;
-
-  try {
-    const response = await fetch(`${baseUrl}${endpoint}`, {
-      headers: commonHeaders,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error fetching data from ${endpoint}`);
-    }
-
-    const { data: fetchedData } = await response.json();
-    return fetchedData;
-  } catch (err: any) {
-    setError(err.message);
-    return null;
-  }
-};
-
 export const useKankaConnection = (): KankaConnectionType => {
   const [status, setStatus] = useState<ConnectionStatus>('loading');
 
@@ -103,6 +47,63 @@ export const useKankaConnection = (): KankaConnectionType => {
       setBaseUrl(KANKA_BASE_URL);
     }
   }, [apiKey, baseUrl]);
+
+  const fetchFromEndpoint = async ({
+    status,
+    endpoint,
+    baseUrl,
+    commonHeaders,
+    setError,
+  }: fetchFromEndpointType): Promise<any[] | null> => {
+    if (status !== 'valid') return null;
+  
+    try {
+      const response = await fetch(`${baseUrl}${endpoint}`, {
+        headers: commonHeaders,
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error fetching data from ${endpoint}`);
+      }
+  
+      const { data: fetchedData } = await response.json();
+      return fetchedData;
+    } catch (err: any) {
+      setError(err.message);
+      return null;
+    }
+  };
+
+  const validateConnection = async ({
+    apiKey,
+    setError,
+    setStatus,
+    commonHeaders,
+    baseUrl,
+  }: validateConnectionType) => {
+    if (!apiKey) {
+      setError('API key is missing');
+      setStatus('invalid');
+      return;
+    }
+  
+    try {
+      const response = await fetch(`${baseUrl}/campaigns`, {
+        headers: commonHeaders,
+      });
+  
+      if (response.ok) {
+        setStatus('valid');
+      } else {
+        setStatus('invalid');
+        setError(`Error fetching from ${baseUrl}/campaigns.`);
+      }
+    } catch {
+      setStatus('invalid');
+      setError('Failed to validate connection');
+    }
+  };
+  
 
   // once the apiKey & baseUrl are loaded, validate the connection
   useEffect(() => {
@@ -147,6 +148,6 @@ export const useKankaConnection = (): KankaConnectionType => {
     connection: connection,
     loading: loading,
     error: error,
-    fetchData: fetchData,
+    fetchData,
   };
 };
