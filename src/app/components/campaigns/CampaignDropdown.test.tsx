@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { KankaContextType } from '../../contexts/types';
+import { KankaContextType } from '../../types';
 import CampaignDropdown from './CampaignDropdown';
 import { KankaContext } from '../../contexts/KankaContext';
 

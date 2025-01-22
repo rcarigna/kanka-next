@@ -5,8 +5,8 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import { CampaignType, KankaContextType } from './types';
-import { useKankaConnection } from './useKankaConnection';
+import { CampaignType, KankaContextType } from '../types';
+import { useKankaConnection } from '../hooks';
 
 export const KankaContext = createContext<KankaContextType | undefined>(
   undefined

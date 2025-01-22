@@ -1,4 +1,4 @@
-export * from './constants';
+export * from '../constants';
 export * from './KankaContext';
-export * from './types';
-export * from './useKankaConnection';
+export * from '../types';
+export * from '../hooks/useKankaConnection';

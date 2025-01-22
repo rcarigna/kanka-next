@@ -1,7 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import {
-  KankaContextType
-} from './contexts/types';
+import { KankaContextType } from './types';
 import { KankaContext } from './contexts/KankaContext';
 import Home from './page';
 
@@ -17,7 +15,7 @@ describe('HomePage', () => {
       },
     })
   ) as jest.Mock;
-  
+
   const props: KankaContextType = {
     connection: {
       connection: {
@@ -44,6 +42,4 @@ describe('HomePage', () => {
     );
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
-
-  
 });

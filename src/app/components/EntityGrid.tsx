@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid2 as Grid } from '@mui/material';
 import { EntityGridProps } from '../contexts';
-import { StyledCard } from './styles';
+import { StyledCard } from '../styles/styles';
 
 export const EntityGrid: React.FC<EntityGridProps> = ({
   entities,

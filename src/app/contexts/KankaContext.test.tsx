@@ -5,12 +5,12 @@ import {
   useKankaContext,
   KankaContext,
 } from './KankaContext';
-import { useKankaConnection } from './useKankaConnection';
+import { useKankaConnection } from '../hooks/useKankaConnection';
 import '@testing-library/jest-dom';
-import { KankaConnectionType } from './types';
+import { KankaConnectionType } from '../types';
 
 // Mock useKankaConnection
-jest.mock('./useKankaConnection');
+jest.mock('../hooks/useKankaConnection');
 const mockUseKankaConnection =
   useKankaConnection as jest.Mock<KankaConnectionType>;
 
