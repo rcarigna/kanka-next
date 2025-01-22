@@ -108,13 +108,15 @@ export const useKankaConnection = (): KankaConnectionType => {
   // once the apiKey & baseUrl are loaded, validate the connection
   useEffect(() => {
     if (apiKey && baseUrl) {
-      validateConnection({
-        apiKey,
-        setError,
-        setStatus,
-        commonHeaders,
-        baseUrl,
-      });
+      (async () => {
+        await validateConnection({
+          apiKey,
+          setError,
+          setStatus,
+          commonHeaders,
+          baseUrl,
+        });
+      })();
     }
   }, [apiKey, baseUrl, commonHeaders]);
 
