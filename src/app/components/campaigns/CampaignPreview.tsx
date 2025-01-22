@@ -5,10 +5,12 @@ import { StyledPanel } from './styles';
 
 export const CampaignPreview = ({
   campaign,
+  baseURL,
 }: {
   campaign: CampaignType;
+  baseURL: string;
 }): JSX.Element => {
-  const campaignUrl = `https://app.kanka.io/w/${campaign.id}`;
+  const campaignUrl = `${baseURL}/w/${campaign.id}`;
   return (
     <StyledPanel>
       <Typography>{campaign.name}</Typography>
