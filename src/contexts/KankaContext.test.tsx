@@ -5,7 +5,7 @@ import {
   useKankaContext,
   KankaContext,
 } from './KankaContext';
-import { useKankaConnection } from '../hooks/useKankaConnection';
+import { useKankaConnection } from '../hooks';
 import '@testing-library/jest-dom';
 import { KankaConnectionType } from '../types';
 

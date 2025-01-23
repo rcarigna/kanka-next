@@ -5,7 +5,7 @@ import { CssBaseline } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import localFont from 'next/font/local';
 import './styles/globals.css';
-import { KankaDataProvider } from './contexts/KankaContext';
+import { KankaDataProvider } from '../contexts';
 
 const theme = createTheme({
   palette: {

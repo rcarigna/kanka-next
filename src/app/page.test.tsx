@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { KankaContextType } from './types';
-import { KankaContext } from './contexts/KankaContext';
+import { KankaContextType } from '../types';
+import { KankaContext } from '../contexts';
 import Home from './page';
 
 describe('HomePage', () => {

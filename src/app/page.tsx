@@ -1,5 +1,5 @@
 'use client';
-import { PageWrapper, Content } from './components';
+import { PageWrapper, Content } from '../components';
 import { ErrorBoundary } from 'react-error-boundary';
 
 const Home: React.FC = () => {
