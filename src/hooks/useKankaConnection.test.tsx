@@ -1,16 +1,32 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useKankaConnection } from './useKankaConnection';
+import * as api from '../api';
+import { waitFor } from '@testing-library/react';
+
+jest.mock('../api');
 
 describe('useKankaConnection', () => {
-  // Mock the fetch function
-  const fetchMock = jest.fn();
-  global.fetch = fetchMock;
+  const originalEnv = process.env;
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  beforeEach(() => {
+    jest.resetModules(); // Clear the cache
+    process.env = {
+      ...originalEnv,
+      NEXT_PUBLIC_API_KEY: 'mock-api-key',
+      NEXT_PUBLIC_BASE_URL: 'mock-base-url',
+    }; // Make a copy
   });
 
+  afterEach(() => {
+    process.env = originalEnv; // Restore the original environment
+    jest.clearAllMocks();
+  });
   it('should set apiKey to undefined and status to apiKeyMissing when clearApiKey is called', () => {
+    process.env = {
+      ...originalEnv,
+      NEXT_PUBLIC_API_KEY: undefined,
+      NEXT_PUBLIC_BASE_URL: undefined,
+    };
     const { result } = renderHook(() => useKankaConnection());
 
     act(() => {
@@ -25,6 +41,7 @@ describe('useKankaConnection', () => {
 
     expect(result.current.connection.apiKey).toBeUndefined();
     expect(result.current.connection.status).toBe('apiKeyMissing');
+    process.env = originalEnv;
   });
 
   it('should set apiKey to undefined and status to apiKeyMissing when clearApiKey is called', () => {
@@ -55,6 +72,8 @@ describe('useKankaConnection', () => {
   });
 
   it('should set status to invalid and set error when validateConnection fails', async () => {
+    (api.validateConnection as jest.Mock).mockResolvedValue('invalid');
+
     const { result, waitForNextUpdate } = renderHook(() =>
       useKankaConnection()
     );
@@ -62,41 +81,20 @@ describe('useKankaConnection', () => {
     act(() => {
       result.current.connection.setApiKey('invalid-api-key');
     });
+    act(() => {
+      result.current.connection.setBaseUrl('https://api.kanka.io/1.0');
+    });
 
-    await waitForNextUpdate();
+    await waitForNextUpdate({ timeout: 3000 });
+    expect(result.current.connection.status).toBe('invalid');
 
     expect(result.current.error).toBeTruthy();
-    expect(result.current.connection.status).toBe('invalid');
     expect(result.current.error).toBe('Failed to validate connection');
   });
 
-  it('should set status to invalid and set error when fetch is not ok', async () => {
-    fetchMock.mockResolvedValueOnce({
-      json: jest.fn().mockResolvedValueOnce({ data: 'mocked data' }),
-      ok: false,
-    });
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useKankaConnection()
-    );
-
-    act(() => {
-      result.current.connection.setApiKey('invalid-api-key');
-    });
-
-    await waitForNextUpdate();
-
-    expect(result.current.error).toBeTruthy();
-    expect(result.current.connection.status).toBe('invalid');
-    expect(result.current.error).toBe(
-      'Error fetching from https://api.kanka.io/1.0/campaigns.'
-    );
-  });
-
   it('should set status to valid when validateConnection succeeds', async () => {
-    fetchMock.mockResolvedValueOnce({
-      json: jest.fn().mockResolvedValueOnce({ data: 'mocked data' }),
-      ok: true,
-    });
+    (api.validateConnection as jest.Mock).mockResolvedValue('valid');
+
     const { result, waitForNextUpdate } = renderHook(() =>
       useKankaConnection()
     );
@@ -105,69 +103,25 @@ describe('useKankaConnection', () => {
       result.current.connection.setApiKey('valid-api-key');
     });
 
-    await waitForNextUpdate();
+    act(() => {
+      result.current.connection.setBaseUrl('https://api.kanka.io/1.0');
+    });
+    await waitForNextUpdate({ timeout: 3000 });
 
     expect(result.current.error).toBeNull();
     expect(result.current.connection.status).toBe('valid');
   });
 
-  it('should fetch data from endpoint', async () => {
-    fetchMock.mockResolvedValue({
-      json: jest.fn().mockResolvedValueOnce({ data: 'mocked data' }),
-      ok: true,
-    });
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useKankaConnection()
+  it('should set key and url if they are in constants', async () => {
+    // Mock environment variables
+    process.env.NEXT_PUBLIC_API_KEY = 'mock-api-key';
+    process.env.NEXT_PUBLIC_BASE_URL = 'mock-base-url';
+
+    const { result } = renderHook(() => useKankaConnection());
+
+    await waitFor(() =>
+      expect(result.current.connection.apiKey).toBe('mock-api-key')
     );
-
-    act(() => {
-      result.current.connection.setApiKey('valid-api-key');
-    });
-
-    await waitForNextUpdate();
-
-    const saveMock = jest.fn();
-    act(() => {
-      result.current.fetchData({
-        endpoint: '/test-endpoint',
-        save: saveMock,
-      });
-    });
-
-    await waitForNextUpdate();
-
-    expect(saveMock).toHaveBeenCalled();
-    expect(saveMock).toHaveBeenCalledWith('mocked data');
-    expect(result.current.loading).toBe(false);
-  });
-
-  it('should throw an error when failing to fetch data from endpoint', async () => {
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useKankaConnection()
-    );
-
-    act(() => {
-      result.current.connection.setApiKey('valid-api-key');
-    });
-
-    await waitForNextUpdate();
-
-    fetchMock.mockResolvedValue({
-      ok: false,
-    });
-    const saveMock = jest.fn();
-    act(() => {
-      result.current.fetchData({
-        endpoint: '/test-endpoint',
-        save: saveMock,
-      });
-    });
-
-    await waitForNextUpdate();
-    expect(result.current.error).toBeTruthy();
-    expect(result.current.error).toBe(
-      'Error fetching data from /test-endpoint'
-    );
+    expect(result.current.connection.baseUrl).toBe('mock-base-url');
   });
 });
-// });

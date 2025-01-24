@@ -4,9 +4,11 @@ import React, {
   ReactNode,
   useState,
   useEffect,
+  useCallback,
 } from 'react';
 import { CampaignType, KankaContextType } from '../types';
 import { useKankaConnection } from '../hooks';
+import { fetchEntity } from '../api';
 
 export const KankaContext = createContext<KankaContextType | undefined>(
   undefined
@@ -14,26 +16,47 @@ export const KankaContext = createContext<KankaContextType | undefined>(
 
 export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const kankaConnection = useKankaConnection();
-  const { status } = kankaConnection.connection;
-
-  const { fetchData, loading } = kankaConnection;
+  const { status, apiKey, baseUrl } = kankaConnection.connection;
 
   const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
 
   useEffect(() => {
     const loadCampaignOptions = async () => {
-      if (status === 'valid' && loading) {
-        fetchData({ endpoint: `/campaigns`, save: setCampaigns });
+      if (status === 'valid' && apiKey && baseUrl) {
+        try {
+          const data = await fetchEntity(apiKey, baseUrl, 'campaigns');
+          setCampaigns(data);
+        } catch (err) {
+          console.error('Error fetching campaigns:', err);
+        }
       }
     };
+
     loadCampaignOptions();
-  }, [status, fetchData, loading]);
+  }, [status, apiKey, baseUrl]);
+
+  // Wrapper for fetching entities
+  const fetchEntityWrapper = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (entityType: string, save: (data: any[]) => void) => {
+      if (status === 'valid' && apiKey && baseUrl) {
+        try {
+          const data = await fetchEntity(apiKey, baseUrl, entityType);
+          save(data);
+        } catch (err) {
+          console.error(`Error fetching ${entityType}:`, err);
+        }
+      }
+    },
+    [status, apiKey, baseUrl]
+  );
 
   return (
     <KankaContext.Provider
       value={{
         connection: kankaConnection,
         campaigns: campaigns,
+        fetchEntity: fetchEntityWrapper,
       }}
     >
       {children}
