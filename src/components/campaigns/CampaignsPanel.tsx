@@ -1,4 +1,4 @@
-import { CampaignType } from '../../contexts';
+import { CampaignType } from '../../types';
 import { CampaignPreview } from './CampaignPreview';
 import { EntityGrid } from '../EntityGrid';
 

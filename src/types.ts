@@ -23,6 +23,7 @@ export type KankaItem = {
 export type KankaContextType = {
     connection: KankaConnectionType;
     campaigns?: CampaignType[];
+    fetchEntity: (entityType: string, save: (data: any[]) => void) => void;
 };
 
 
@@ -31,20 +32,21 @@ export type ConnectionType = {
     setApiKey: (value: string | undefined) => void;
     clearApiKey: () => void;
     baseUrl: string;
+    setBaseUrl: (value: string) => void;
     status: ConnectionStatus;
 };
 
 export type KankaConnectionType = {
     connection: ConnectionType;
-    loading: boolean;
+    // loading: boolean;
     error: string;
-    fetchData: ({
-        endpoint,
-        save,
-    }: {
-        endpoint: string;
-        save: (value: any[]) => void;
-    }) => void;
+    // fetchData: ({
+    //     endpoint,
+    //     save,
+    // }: {
+    //     endpoint: string;
+    //     save: (value: any[]) => void;
+    // }) => void;
 };
 
 

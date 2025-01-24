@@ -2,7 +2,7 @@
 import { CampaignsPanel } from './campaigns';
 import { Login } from './Login';
 import { CircularProgress, Typography, Alert, Button } from '@mui/material';
-import { StyledCTAs } from '../styles/styles';
+import { StyledCTAs } from '../app/styles/styles';
 import { useKankaContext } from '../contexts';
 
 const InnerContent = () => {

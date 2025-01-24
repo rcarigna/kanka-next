@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, FormControl, Link } from '@mui/material';
-import { useKankaContext } from '../contexts/KankaContext';
-import { StyledKeyFooter, StyledHelperLink } from '../styles/styles';
+import { useKankaContext } from '../contexts';
+import { StyledKeyFooter, StyledHelperLink } from '../app/styles/styles';
 
 export const Login: React.FC = () => {
   const [keyInput, setKeyInput] = useState('');

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useKankaContext } from '../../contexts/KankaContext';
+import { useKankaContext } from '../../contexts';
 import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 const CampaignDropdown: React.FC = () => {

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { EntityGrid } from './EntityGrid';
-import { EntityGridProps } from '../contexts';
+import { EntityGridProps } from '../types';
 
 describe('EntityGrid', () => {
   const entities = ['Entity 1', 'Entity 2', 'Entity 3'];
