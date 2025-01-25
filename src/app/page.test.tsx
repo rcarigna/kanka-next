@@ -17,6 +17,7 @@ describe('HomePage', () => {
   ) as jest.Mock;
 
   const props: KankaContextType = {
+    fetchEntity: fetchMock,
     connection: {
       connection: {
         apiKey: 'someKey',
@@ -26,11 +27,10 @@ describe('HomePage', () => {
           props.connection.connection.status = 'valid';
         },
         baseUrl: 'someUrl',
+        setBaseUrl: jest.fn(),
         status: 'loading',
       },
-      loading: false,
       error: '',
-      fetchData: fetchMock,
     },
   };
 

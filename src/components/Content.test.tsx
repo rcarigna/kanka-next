@@ -5,6 +5,7 @@ import { KankaContext } from '../contexts/KankaContext';
 
 describe('Content', () => {
   const props: KankaContextType = {
+    fetchEntity: jest.fn(),
     connection: {
       connection: {
         apiKey: 'someKey',
@@ -14,11 +15,10 @@ describe('Content', () => {
           props.connection.connection.status = 'valid';
         },
         baseUrl: 'someUrl',
+        setBaseUrl: jest.fn(),
         status: 'loading',
       },
-      loading: true,
       error: '',
-      fetchData: jest.fn(),
     },
     campaigns: [
       {

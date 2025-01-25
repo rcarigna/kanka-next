@@ -2,15 +2,14 @@ import { Typography, Link } from '@mui/material';
 import { OpenInNew } from '@mui/icons-material';
 import { CampaignType } from '../../types';
 import { StyledPanel } from './styles';
-
+import { useKankaContext } from '../../contexts';
 export const CampaignPreview = ({
   campaign,
-  baseURL,
 }: {
   campaign: CampaignType;
-  baseURL: string;
 }): JSX.Element => {
-  const campaignUrl = `${baseURL}/w/${campaign.id}`;
+  const { baseUrl } = useKankaContext().connection.connection;
+  const campaignUrl = `${baseUrl}/w/${campaign.id}`;
   return (
     <StyledPanel>
       <Typography>{campaign.name}</Typography>
