@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { TextField, Button, FormControl, Link } from '@mui/material';
 import { useKankaContext } from '../contexts';

@@ -1,4 +1,5 @@
-import { validateConnection, fetchEntity } from './kankaApi';
+import { validateConnection, fetchEntity, fetchEntityMap } from './kankaApi';
+import { entityMap } from './entityMap';
 
 global.fetch = jest.fn();
 
@@ -40,6 +41,12 @@ describe('kankaApi', () => {
 
             const result = await validateConnection(apiKey, baseUrl);
             expect(result).toBe('invalid');
+        });
+    });
+
+    describe('fetchEntityMap', () => {
+        it('should return the entity map', () => {
+            expect(fetchEntityMap()).toEqual(entityMap);
         });
     });
 

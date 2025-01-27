@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConnectionStatus } from '../types';
 import { commonHeaders } from './constants';
+import { entityMap } from './entityMap';
 
 export const validateConnection = async (
     apiKey: string,
@@ -19,6 +20,8 @@ export const validateConnection = async (
         return 'invalid';
     }
 };
+
+export const fetchEntityMap = () => entityMap
 
 export const fetchEntity = async (
     apiKey: string,
