@@ -1,4 +1,4 @@
-import { validateConnection, fetchEntity, fetchEntityMap } from './kankaApi';
+import { validateConnection, fetchEntity, fetchEntityMap, fetchEntityById, fetchEntitiesForType } from './kankaApi';
 import { entityMap } from './entityMap';
 
 global.fetch = jest.fn();
@@ -76,6 +76,57 @@ describe('kankaApi', () => {
             });
 
             await expect(fetchEntity(apiKey, baseUrl, entityType)).rejects.toThrow(`Failed to fetch ${entityType}`);
+        });
+    });
+
+    describe('fetchEntityById', () => {
+        const entityType = 'character';
+        const id = 1;
+
+        it('should fetch and return entity data when the request is successful', async () => {
+            const mockData = { id, name: 'Entity 1', entity_id: 1, tags: ['tag1', 'tag2'] };
+            (fetch as jest.Mock).mockResolvedValue({
+                ok: true,
+            });
+
+            const result = await fetchEntityById({ entityType, id });
+            expect(result).toEqual(mockData);
+        });
+
+        it('should throw an error when the entity type is invalid', async () => {
+            const entityType = 'invalid_entity';
+            const id = 1;
+
+            await expect(fetchEntityById({ entityType, id })).rejects.toThrow(`Invalid entity type: ${entityType}`);
+        });
+    });
+
+    describe('fetchEntitiesForType', () => {
+        it('should fetch and return entity data when the request is successful', async () => {
+            const entityType = 'characters';
+            const mockData = [{ id: 1, name: 'Test Character' }];
+            (fetch as jest.Mock).mockResolvedValue({
+                ok: true,
+                json: jest.fn().mockResolvedValue({ data: mockData }),
+            });
+
+            const result = await fetchEntitiesForType(entityType);
+            expect(result).toEqual(mockData);
+            expect(fetch).toHaveBeenCalledWith(`${baseUrl}/${entityType}`, {
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+        });
+
+        it('should throw an error when the request fails', async () => {
+            const entityType = 'characters';
+            (fetch as jest.Mock).mockResolvedValue({
+                ok: false,
+            });
+
+            await expect(fetchEntitiesForType(entityType)).rejects.toThrow(`Failed to fetch ${entityType}`);
         });
     });
 });

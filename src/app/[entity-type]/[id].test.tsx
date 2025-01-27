@@ -1,16 +1,19 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import Entity from './[id]';
+import EntityInstance from './[id]';
+import { useRouter } from 'next/router';
 
-jest.mock('../../components', () => ({
-  PageWrapper: ({ children }: { children: React.ReactNode }) => (
-    <div> {children} </div>
-  ),
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
 }));
-describe('Entity', () => {
+
+describe('EntityInstance', () => {
   it('should render the entity details', async () => {
-    render(<Entity />);
+    (useRouter as jest.Mock).mockReturnValue({
+      query: { entityType: 'character', id: '1' },
+    });
+    render(<EntityInstance />);
     await waitFor(async () => {
-      expect(await screen.findByText('Entity goes here')).toBeInTheDocument();
+      expect(await screen.findByText('Entity 1')).toBeInTheDocument();
     });
   });
 });

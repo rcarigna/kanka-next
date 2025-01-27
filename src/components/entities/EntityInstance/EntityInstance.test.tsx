@@ -45,4 +45,33 @@ describe('EntityInstance', () => {
       expect(screen.getByText('Not found')).toBeInTheDocument();
     });
   });
+  it('should handle not being passed an entity type', async () => {
+    render(<EntityInstance entityType='' id={character.id} />);
+    await waitFor(async () => {
+      expect(screen.getByText('Invalid entity type')).toBeInTheDocument();
+    });
+  });
+  it('should handle not being passed a character ID', async () => {
+    render(<EntityInstance entityType='character' />);
+    await waitFor(async () => {
+      expect(screen.getByText('Invalid entity ID')).toBeInTheDocument();
+    });
+  });
+  it('should handle unknown entity types', async () => {
+    render(<EntityInstance entityType='invalid-type' id={character.id} />);
+    await waitFor(async () => {
+      expect(
+        screen.getByText('Invalid entity type: invalid-type')
+      ).toBeInTheDocument();
+    });
+  });
+  it('should handle when no entities of that id exist', async () => {
+    (api.fetchEntityById as jest.Mock).mockResolvedValue(undefined);
+    render(<EntityInstance entityType='character' id={character.id} />);
+    await waitFor(async () => {
+      expect(
+        screen.getByText('No entities with id 1 of type character available')
+      ).toBeInTheDocument();
+    });
+  });
 });

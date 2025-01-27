@@ -37,6 +37,17 @@ export const EntityInstance = ({
     }
   }, [entity, entityMap, entityType, id]);
 
+  if (!id) {
+    return (
+      <Typography
+        variant='h6'
+        color='error'
+        data-testid='entity-id-error-message'
+      >
+        Invalid entity ID
+      </Typography>
+    );
+  }
   if (!entityType || !entityMap.some((entity) => entity.code === entityType)) {
     return (
       <Typography

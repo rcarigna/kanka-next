@@ -1,12 +1,15 @@
 'use client';
+import { useRouter } from 'next/router';
 import { PageWrapper } from '../../components';
-import { EntitiesPanel } from '../../components/entities';
+import { EntityPanel } from '../../components/entities';
 
-const Entities: React.FC = () => {
+const Entity: React.FC = () => {
+  const router = useRouter();
+  const { entityType } = router.query;
   return (
     <PageWrapper>
-      <EntitiesPanel />
+      <EntityPanel entityType={entityType as string} />
     </PageWrapper>
   );
 };
-export default Entities;
+export default Entity;

@@ -1,12 +1,21 @@
 'use client';
-import { Typography } from '@mui/material';
-import { PageWrapper, EntityPanel } from '../../components';
+import { useRouter } from 'next/router';
+import {
+  PageWrapper,
+  EntityInstance as EntityInstancePanel,
+} from '../../components';
 
-const Entity: React.FC = () => {
+const EntityInstance: React.FC = () => {
+  const router = useRouter();
+  const { entityType, id } = router.query;
+
   return (
     <PageWrapper>
-      <Typography>Entity goes here</Typography>
+      <EntityInstancePanel
+        entityType={entityType as string}
+        id={Number(id as string)}
+      />
     </PageWrapper>
   );
 };
-export default Entity;
+export default EntityInstance;

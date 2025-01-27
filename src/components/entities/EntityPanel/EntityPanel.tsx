@@ -31,7 +31,10 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
           setEntities(data);
           setLoading(false);
         })
-        .catch((err) => setError(err));
+        .catch((err) => {
+          setError(err);
+          setLoading(false);
+        });
     }
   }, [entities, entityMap, entityType]);
 
@@ -49,7 +52,7 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
   if (loading) {
     return (
       <Box>
-        <CircularProgress />
+        <CircularProgress role='progressbar' />
         <Typography>Loading...</Typography>
       </Box>
     );

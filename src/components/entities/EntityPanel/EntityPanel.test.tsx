@@ -67,4 +67,21 @@ describe('EntityPanel', () => {
       screen.getByText(`Invalid entity type: invalid-type`)
     ).toBeInTheDocument();
   });
+
+  it('should handle not being given an entity type', () => {
+    // Assert that an error message is displayed if no entity type is provided.
+    render(<EntityPanel />);
+    expect(screen.getByText('Invalid entity type')).toBeInTheDocument();
+  });
+
+  it('should display an error message if the API call fails', async () => {
+    // Mock the API to reject the promise with an error.
+    // Assert that an error message is displayed.
+    const error = new Error('Failed to fetch entities');
+    (api.fetchEntitiesForType as jest.Mock).mockRejectedValueOnce(error);
+    render(<EntityPanel entityType='character' />);
+    await waitFor(async () => {
+      expect(screen.getByText(error.message)).toBeInTheDocument();
+    });
+  });
 });
