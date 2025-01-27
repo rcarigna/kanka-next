@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Entity } from '../components/entities/EntityPanel/types';
 import { ConnectionStatus } from '../types';
+import { setApiConfig, getApiConfig } from './apiConfig';
 import { commonHeaders } from './constants';
 import { entityMap } from './entityMap';
 
@@ -13,6 +15,7 @@ export const validateConnection = async (
         });
 
         if (response.ok) {
+            setApiConfig(apiKey, baseUrl);
             return 'valid';
         }
         throw new Error('Invalid API Key or URL');
@@ -41,6 +44,23 @@ export const fetchEntity = async (
     return data;
 };
 
+export const fetchEntityById = async ({ entityType, id }: { entityType: string, id: number }): Promise<Entity> => {
+    const entity_id = entityMap.find((entity) => entity.code === entityType)?.id;
+    if (!entity_id) {
+        throw new Error(`Invalid entity type: ${entityType}`);
+    }
+    return {
+        id,
+        name: 'Entity 1',
+        entity_id: entity_id,
+        tags: ['tag1', 'tag2'],
+    };
+}
+
+export const fetchEntitiesForType = async (entityType: string): Promise<Entity[]> => {
+    const { apiKey, baseUrl } = getApiConfig();
+    return fetchEntity(apiKey, baseUrl, entityType);
+};
 // export const createEntity = async (
 //     apiKey: string,
 //     baseUrl: string,

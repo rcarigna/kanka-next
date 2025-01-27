@@ -24,6 +24,8 @@ export type KankaContextType = {
     connection: KankaConnectionType;
     campaigns?: CampaignType[];
     fetchEntity: (entityType: string, save: (data: any[]) => void) => void;
+    // fetchEntitiesForType: (entityType: string, save: (data: any[]) => void) => void;
+    // fetchEntityById: ({ entityType, id }: { entityType: string; id: number }) => void;
 };
 
 

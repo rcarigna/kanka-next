@@ -1,4 +1,6 @@
-export const entityMap: { id: number; code: string }[] = [{
+export type EntityType = { id: number; code: string };
+
+export const entityMap: EntityType[] = [{
     "id": 1,
     "code": "character"
 },

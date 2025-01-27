@@ -1,0 +1,31 @@
+export type CharacterEntity = {
+    id: number;
+    name: string;
+    entry?: string;
+    image?: string;
+    image_full?: string;
+    image_thumb?: string;
+    has_custom_image?: boolean;
+    is_private?: boolean;
+    is_personality_visible?: boolean;
+    is_template?: boolean;
+    entity_id: number; // the entity type id
+    tags?: Array<string>;
+    created_at?: string;
+    created_by?: number;
+    updated_at?: string;
+    updated_by?: number;
+    location_id?: number;
+    title?: string;
+    age?: string;
+    sex?: string;
+    pronouns?: string;
+    races?: Array<number>;
+    private_races?: Array<number>;
+    type?: string;
+    families?: Array<number>;
+    private_families?: Array<number>;
+    is_dead?: boolean;
+    traits?: Array<unknown>;
+};
+export type Entity = CharacterEntity;
