@@ -26,12 +26,26 @@ export const validateConnection = async (
 
 export const fetchEntityMap = () => entityMap
 
+export const generateEntityPath = ({ entityType, selectedCampaign }: { entityType: string; selectedCampaign?: number }): string => {
+    const entity = entityMap.find((entity) => entity.code === entityType);
+    if (!entity) {
+        throw new Error(`Invalid entity type: ${entityType}`);
+    }
+    const { baseUrl } = getApiConfig();
+
+    if (entityType === 'campaigns' || entityType === 'entities') {
+        return `${baseUrl}/${entityType}`;
+    }
+    return `${baseUrl}/campaigns/${selectedCampaign}/${entity.code}`;
+}
+
 export const fetchEntity = async (
     apiKey: string,
-    baseUrl: string,
-    entityType: string
+    entityType: string,
+    selectedCampaign?: number,
 ): Promise<any[]> => {
-    const endpoint = `${baseUrl}/${entityType}`;
+    // const endpoint = `${baseUrl}/${entityType}`;
+    const endpoint = generateEntityPath({ entityType, selectedCampaign });
     const response = await fetch(endpoint, {
         headers: commonHeaders(apiKey),
     });
@@ -57,9 +71,9 @@ export const fetchEntityById = async ({ entityType, id }: { entityType: string, 
     };
 }
 
-export const fetchEntitiesForType = async (entityType: string): Promise<Entity[]> => {
-    const { apiKey, baseUrl } = getApiConfig();
-    return fetchEntity(apiKey, baseUrl, entityType);
+export const fetchEntitiesForType = async ({ entityType, selectedCampaign }: { entityType: string; selectedCampaign?: number }): Promise<Entity[]> => {
+    const { apiKey } = getApiConfig();
+    return fetchEntity(apiKey, entityType, selectedCampaign);
 };
 // export const createEntity = async (
 //     apiKey: string,

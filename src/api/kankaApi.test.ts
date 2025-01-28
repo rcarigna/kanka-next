@@ -1,12 +1,20 @@
-import { validateConnection, fetchEntity, fetchEntityMap, fetchEntityById, fetchEntitiesForType } from './kankaApi';
+import { validateConnection, fetchEntity, fetchEntityMap, fetchEntityById, fetchEntitiesForType, generateEntityPath } from './kankaApi';
 import { entityMap } from './entityMap';
 
 global.fetch = jest.fn();
+const apiKey = 'test-api-key';
+const baseUrl = 'https://api.kanka.io';
+jest.mock('./apiConfig', () => ({
+    getApiConfig: jest.fn(() => ({ apiKey, baseUrl, selectedCampaign: 123 })),
+    setApiConfig: jest.fn(),
+}));
 
 describe('kankaApi', () => {
-    const apiKey = 'test-api-key';
-    const baseUrl = 'https://api.kanka.io';
 
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -51,7 +59,7 @@ describe('kankaApi', () => {
     });
 
     describe('fetchEntity', () => {
-        const entityType = 'characters';
+        const entityType = 'campaigns';
 
         it('should fetch and return entity data when the request is successful', async () => {
             const mockData = [{ id: 1, name: 'Test Character' }];
@@ -60,13 +68,14 @@ describe('kankaApi', () => {
                 json: jest.fn().mockResolvedValue({ data: mockData }),
             });
 
-            const result = await fetchEntity(apiKey, baseUrl, entityType);
+            const result = await fetchEntity(apiKey, entityType);
             expect(result).toEqual(mockData);
+            expect(fetch).toHaveBeenCalledTimes(1);
             expect(fetch).toHaveBeenCalledWith(`${baseUrl}/${entityType}`, {
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,
                     'Content-Type': 'application/json',
-                },
+                }
             });
         });
 
@@ -75,7 +84,7 @@ describe('kankaApi', () => {
                 ok: false,
             });
 
-            await expect(fetchEntity(apiKey, baseUrl, entityType)).rejects.toThrow(`Failed to fetch ${entityType}`);
+            await expect(fetchEntity(apiKey, entityType)).rejects.toThrow(`Failed to fetch ${entityType}`);
         });
     });
 
@@ -103,16 +112,17 @@ describe('kankaApi', () => {
 
     describe('fetchEntitiesForType', () => {
         it('should fetch and return entity data when the request is successful', async () => {
-            const entityType = 'characters';
+            const entityType = 'character';
+            const selectedCampaign = 123;
             const mockData = [{ id: 1, name: 'Test Character' }];
             (fetch as jest.Mock).mockResolvedValue({
                 ok: true,
                 json: jest.fn().mockResolvedValue({ data: mockData }),
             });
 
-            const result = await fetchEntitiesForType(entityType);
+            const result = await fetchEntitiesForType({ entityType, selectedCampaign });
             expect(result).toEqual(mockData);
-            expect(fetch).toHaveBeenCalledWith(`${baseUrl}/${entityType}`, {
+            expect(fetch).toHaveBeenCalledWith(`${baseUrl}/campaigns/${selectedCampaign}/${entityType}`, {
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,
                     'Content-Type': 'application/json',
@@ -121,12 +131,31 @@ describe('kankaApi', () => {
         });
 
         it('should throw an error when the request fails', async () => {
-            const entityType = 'characters';
+            const entityType = 'character';
             (fetch as jest.Mock).mockResolvedValue({
                 ok: false,
             });
+            const selectedCampaign = 123;
 
-            await expect(fetchEntitiesForType(entityType)).rejects.toThrow(`Failed to fetch ${entityType}`);
+
+            await expect(fetchEntitiesForType({ entityType, selectedCampaign })).rejects.toThrow(`Failed to fetch ${entityType}`);
+        });
+    });
+
+    describe('generateEntityPath', () => {
+
+        it('should generate the correct path for campaigns', () => {
+            const path = generateEntityPath({ entityType: 'campaigns' });
+            expect(path).toBe('https://api.kanka.io/campaigns');
+        });
+
+        it('should generate the correct path for other entity types', () => {
+            const path = generateEntityPath({ entityType: 'character', selectedCampaign: 123 });
+            expect(path).toBe('https://api.kanka.io/campaigns/123/character');
+        });
+
+        it('should throw an error for invalid entity types', () => {
+            expect(() => generateEntityPath({ entityType: 'invalidType' })).toThrow('Invalid entity type: invalidType');
         });
     });
 });

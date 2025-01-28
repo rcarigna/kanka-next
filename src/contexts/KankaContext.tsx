@@ -24,7 +24,7 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     const loadCampaignOptions = async () => {
       if (status === 'valid' && apiKey && baseUrl) {
         try {
-          const data = await fetchEntity(apiKey, baseUrl, 'campaigns');
+          const data = await fetchEntity(apiKey, 'campaigns');
           setCampaigns(data);
         } catch (err) {
           console.error('Error fetching campaigns:', err);
@@ -39,16 +39,16 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const fetchEntityWrapper = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async (entityType: string, save: (data: any[]) => void) => {
-      if (status === 'valid' && apiKey && baseUrl) {
+      if (status === 'valid' && apiKey) {
         try {
-          const data = await fetchEntity(apiKey, baseUrl, entityType);
+          const data = await fetchEntity(apiKey, entityType);
           save(data);
         } catch (err) {
           console.error(`Error fetching ${entityType}:`, err);
         }
       }
     },
-    [status, apiKey, baseUrl]
+    [status, apiKey]
   );
 
   return (

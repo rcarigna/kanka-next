@@ -35,9 +35,6 @@ describe('Entities Page', () => {
   });
   it('renders PageWrapper and EntitiesPanel', async () => {
     render(<Entities />);
-    // await waitFor(() =>
-    //   expect(screen.getByText('Loading...')).not.toBeInTheDocument()
-    // );
     await waitFor(() =>
       expect(screen.getByTestId('entities-panel')).toBeInTheDocument()
     );

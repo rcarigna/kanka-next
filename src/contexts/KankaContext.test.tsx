@@ -88,7 +88,6 @@ describe('KankaDataProvider', () => {
 
     expect(mockFetchData).toHaveBeenCalledWith(
       mockConnection.apiKey,
-      mockConnection.baseUrl,
       'campaigns'
     );
   });
@@ -146,7 +145,6 @@ describe('KankaDataProvider', () => {
     await waitFor(() => {
       expect(mockFetchData).toHaveBeenCalledWith(
         mockConnection.apiKey,
-        mockConnection.baseUrl,
         'characters'
       );
     });
@@ -184,7 +182,6 @@ describe('KankaDataProvider', () => {
     await waitFor(() => {
       expect(mockFetchData).toHaveBeenCalledWith(
         mockConnection.apiKey,
-        mockConnection.baseUrl,
         'characters'
       );
     });
@@ -225,11 +222,7 @@ describe('KankaDataProvider', () => {
     );
 
     await waitFor(() => {
-      expect(mockFetchData).toHaveBeenCalledWith(
-        'valid-api-key',
-        'baseUrl.com',
-        'campaigns'
-      );
+      expect(mockFetchData).toHaveBeenCalledWith('valid-api-key', 'campaigns');
     });
 
     expect(spy).toHaveBeenCalledWith(
