@@ -19,6 +19,9 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const { status, apiKey, baseUrl } = kankaConnection.connection;
 
   const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
+  const [selectedCampaign, setSelectedCampaign] = useState<number | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     const loadCampaignOptions = async () => {
@@ -55,8 +58,10 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     <KankaContext.Provider
       value={{
         connection: kankaConnection,
-        campaigns: campaigns,
+        campaigns,
         fetchEntity: fetchEntityWrapper,
+        selectedCampaign,
+        setSelectedCampaign,
       }}
     >
       {children}

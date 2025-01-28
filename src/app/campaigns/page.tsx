@@ -10,7 +10,7 @@ const Campaigns: React.FC = () => {
   }
   return (
     <PageWrapper>
-      <CampaignsPanel campaigns={campaigns || []} />
+      <CampaignsPanel campaigns={campaigns} />
     </PageWrapper>
   );
 };
