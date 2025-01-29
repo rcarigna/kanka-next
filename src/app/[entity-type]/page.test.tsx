@@ -1,11 +1,9 @@
 import React from 'react';
+import { useParams } from 'next/navigation';
+
 import { render, screen, waitFor } from '@testing-library/react';
 import Entities from './page';
 import * as api from '../../api';
-
-jest.mock('next/navigation', () => ({
-  useParams: jest.fn().mockReturnValue({ 'entity-type': 'character' }),
-}));
 
 jest.mock('../../components', () => ({
   PageWrapper: ({ children }: { children: React.ReactNode }) => (
@@ -18,12 +16,13 @@ jest.mock('../../api', () => ({
   fetchEntityMap: jest.fn().mockResolvedValue([]),
 }));
 
-jest.mock('next/router', () => ({
-  useRouter: jest.fn(),
+jest.mock('next/navigation', () => ({
+  useParams: jest.fn(),
 }));
 
 describe('Entities Page', () => {
   beforeEach(() => {
+    (useParams as jest.Mock).mockReturnValue({ 'entity-type': 'character' });
     jest.spyOn(api, 'fetchEntityMap').mockReturnValue([
       { id: 1, code: 'character' },
       { id: 2, code: 'location' },
@@ -33,11 +32,19 @@ describe('Entities Page', () => {
       .spyOn(api, 'fetchEntitiesForType')
       .mockResolvedValue([{ id: 1, name: 'Character 1', entity_id: 1 }]);
   });
+
   it('renders PageWrapper and EntitiesPanel', async () => {
     render(<Entities />);
     await waitFor(() =>
       expect(screen.getByTestId('entities-panel')).toBeInTheDocument()
     );
     expect(screen.getByText('Character 1')).toBeInTheDocument();
+  });
+  it('renders loading when entityType is not defined', async () => {
+    (useParams as jest.Mock).mockReturnValue({ 'entity-type': undefined });
+    render(<Entities />);
+    await waitFor(() =>
+      expect(screen.getByText('No entity-type found')).toBeInTheDocument()
+    );
   });
 });

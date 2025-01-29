@@ -2,12 +2,13 @@
 import { Typography, Button, Box } from '@mui/material';
 import { useKankaContext } from '../../../contexts';
 import { useMemo } from 'react';
+import { CampaignType } from '../../../types';
 
 export const CampaignSelected = () => {
   const { campaigns, selectedCampaign, setSelectedCampaign } =
     useKankaContext();
 
-  const selectedCampaignData = useMemo(() => {
+  const selectedCampaignData: CampaignType | undefined = useMemo(() => {
     if (!campaigns || !selectedCampaign) {
       return undefined;
     }
@@ -24,6 +25,7 @@ export const CampaignSelected = () => {
         ?.body?.textContent || 'No description available.';
     return { ...selectedCampaignRawData, entry: textEntry };
   }, [campaigns, selectedCampaign]);
+
   return (
     <Box>
       <Button
@@ -32,9 +34,14 @@ export const CampaignSelected = () => {
       >
         Back to Campaigns
       </Button>
-      <Typography variant='h4'>{selectedCampaignData?.name}</Typography>
-      <Typography variant='body1'>{selectedCampaignData?.entry}</Typography>
-      {/* Add other campaign-specific components here */}
+      {selectedCampaignData ? (
+        <>
+          <Typography variant='h4'>{selectedCampaignData?.name}</Typography>
+          <Typography variant='body1'>{selectedCampaignData?.entry}</Typography>
+        </>
+      ) : (
+        <Typography variant='h4'>Problem with campaign selected</Typography>
+      )}
     </Box>
   );
 };

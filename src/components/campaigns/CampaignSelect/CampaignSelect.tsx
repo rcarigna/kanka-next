@@ -11,7 +11,13 @@ export const CampaignSelect = () => {
       <Typography variant='h4' style={{ alignSelf: 'center' }}>
         Select a Campaign
       </Typography>
-      <CampaignsPanel campaigns={campaigns || []} />
+      {campaigns.length === 0 ? (
+        <Typography variant='h6' style={{ alignSelf: 'center' }}>
+          No campaigns found
+        </Typography>
+      ) : (
+        <CampaignsPanel campaigns={campaigns} />
+      )}
     </Box>
   );
 };

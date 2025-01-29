@@ -3,6 +3,7 @@ import { useParams } from 'next/navigation';
 import { PageWrapper } from '../../components';
 import { EntityPanel } from '../../components/entities';
 import { useMemo } from 'react';
+import { Typography } from '@mui/material';
 
 const Entity: React.FC = () => {
   const params = useParams();
@@ -11,13 +12,14 @@ const Entity: React.FC = () => {
     return params['entity-type'];
   }, [params]);
 
-  if (!entityType) {
-    return <div>Loading...</div>;
-  }
-
+  console.log('entityType', entityType);
   return (
     <PageWrapper>
-      <EntityPanel entityType={entityType as string} />
+      {entityType ? (
+        <EntityPanel entityType={entityType as string} />
+      ) : (
+        <Typography>No entity-type found</Typography>
+      )}
     </PageWrapper>
   );
 };

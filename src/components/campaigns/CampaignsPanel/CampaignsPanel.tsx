@@ -7,7 +7,6 @@ export const CampaignsPanel = ({
 }: {
   campaigns: CampaignType[];
 }) => {
-  console.log(`in campaigns panel. campaigns: ${JSON.stringify(campaigns)}`);
   const campaignPreviews = campaigns?.map((campaign) => (
     <CampaignPreview
       key={`campaign-panel-preview-${campaign.id}`}

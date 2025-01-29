@@ -2,12 +2,12 @@
 export type CampaignType = {
     id: number;
     name: string;
-    locale: string;
+    locale: string | null;
     entry: string;
     entry_parsed: string;
-    image: string;
-    image_full: string;
-    image_thumb: string;
+    image: string | null;
+    image_full: string | null;
+    image_thumb: string | null;
     visibility: string;
     visibility_id: number;
     created_at: string;

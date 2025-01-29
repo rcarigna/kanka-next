@@ -39,6 +39,6 @@ describe('CampaignSelect', () => {
       campaigns: [],
     });
     render(<CampaignSelect />);
-    expect(screen.getByText('Select a Campaign')).toBeInTheDocument();
+    expect(screen.getByText('No campaigns found')).toBeInTheDocument();
   });
 });
