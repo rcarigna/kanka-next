@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Image from 'next/image';
+import { Box } from '@mui/material';
 
 export const StyledPage = styled.div`
   --gray-rgb: 0, 0, 0;
@@ -33,6 +34,13 @@ export const StyledPage = styled.div`
     padding: 32px;
     padding-bottom: 80px;
   }
+`;
+
+export const StyledLogoContainer = styled(Box)`
+  display: flex;
+  align-items: center;
+  justify-self: center;
+  align-self: center;
 `;
 
 export const StyledLogo = styled(Image)`
@@ -75,7 +83,7 @@ export const StyledMain = styled.main`
 
 export const StyledHeader = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;

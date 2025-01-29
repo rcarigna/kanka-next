@@ -4,6 +4,8 @@ import { useKankaContext } from '../../../contexts';
 import { useMemo } from 'react';
 import { CampaignType } from '../../../types';
 
+export const NO_ENTRY_TEXT = 'No introduction available.';
+
 export const CampaignSelected = () => {
   const { campaigns, selectedCampaign, setSelectedCampaign } =
     useKankaContext();
@@ -22,7 +24,7 @@ export const CampaignSelected = () => {
     const domParser = new DOMParser();
     const textEntry: string =
       domParser.parseFromString(selectedCampaignRawData.entry, 'text/html')
-        ?.body?.textContent || 'No description available.';
+        ?.body?.textContent || NO_ENTRY_TEXT;
     return { ...selectedCampaignRawData, entry: textEntry };
   }, [campaigns, selectedCampaign]);
 
@@ -35,10 +37,14 @@ export const CampaignSelected = () => {
         Back to Campaigns
       </Button>
       {selectedCampaignData ? (
-        <>
-          <Typography variant='h4'>{selectedCampaignData?.name}</Typography>
+        <Box>
+          {selectedCampaignData?.entry !== NO_ENTRY_TEXT && (
+            <Typography variant='h5' style={{ justifySelf: 'center' }}>
+              Introduction
+            </Typography>
+          )}
           <Typography variant='body1'>{selectedCampaignData?.entry}</Typography>
-        </>
+        </Box>
       ) : (
         <Typography variant='h4'>Problem with campaign selected</Typography>
       )}

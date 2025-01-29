@@ -1,19 +1,8 @@
-// 'use client';
 import type { Metadata } from 'next';
 import React from 'react';
 import { CssBaseline } from '@mui/material';
-// import { ThemeProvider, createTheme } from '@mui/material/styles';
 import localFont from 'next/font/local';
 import './styles/globals.css';
-// import { KankaDataProvider } from '../contexts';
-
-// const theme = createTheme({
-//   palette: {
-//     primary: {
-//       main: '#1976d2',
-//     },
-//   },
-// });
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -39,12 +28,8 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {/* <KankaDataProvider>
-          <ThemeProvider theme={theme}> */}
         <CssBaseline />
         <main>{children}</main>
-        {/* </ThemeProvider>
-        </KankaDataProvider> */}
       </body>
     </html>
   );

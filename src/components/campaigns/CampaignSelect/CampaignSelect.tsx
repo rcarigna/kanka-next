@@ -8,15 +8,15 @@ export const CampaignSelect = () => {
 
   return (
     <Box>
-      <Typography variant='h4' style={{ alignSelf: 'center' }}>
+      <Typography variant='h4' style={{ justifySelf: 'center' }}>
         Select a Campaign
       </Typography>
       {campaigns.length === 0 ? (
-        <Typography variant='h6' style={{ alignSelf: 'center' }}>
+        <Typography variant='h6' style={{ justifySelf: 'center' }}>
           No campaigns found
         </Typography>
       ) : (
-        <CampaignsPanel campaigns={campaigns} />
+        <CampaignsPanel />
       )}
     </Box>
   );

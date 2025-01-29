@@ -9,7 +9,7 @@ describe('CampaignsPanel', () => {
   it('renders without crashing', () => {
     render(
       <KankaContext.Provider value={mockContext}>
-        <CampaignsPanel campaigns={mockContext.campaigns} />
+        <CampaignsPanel />
       </KankaContext.Provider>
     );
     expect(
@@ -20,7 +20,7 @@ describe('CampaignsPanel', () => {
   it('renders the correct number of campaign previews', () => {
     render(
       <KankaContext.Provider value={mockContext}>
-        <CampaignsPanel campaigns={mockContext.campaigns} />
+        <CampaignsPanel />
       </KankaContext.Provider>
     );
     const campaignPreviews = screen.getAllByTestId(/^campaign-panel-preview-/);
@@ -30,7 +30,7 @@ describe('CampaignsPanel', () => {
   it('renders campaign previews with correct keys', () => {
     const { getByTestId } = render(
       <KankaContext.Provider value={mockContext}>
-        <CampaignsPanel campaigns={mockContext.campaigns} />
+        <CampaignsPanel />
       </KankaContext.Provider>
     );
     mockContext.campaigns.forEach((campaign) => {

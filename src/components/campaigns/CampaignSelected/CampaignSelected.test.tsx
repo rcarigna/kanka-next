@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CampaignSelected } from './CampaignSelected';
+import { CampaignSelected, NO_ENTRY_TEXT } from './CampaignSelected';
 import { KankaContext } from '../../../contexts';
 import { mockContext } from '../../../__mocks__/constants';
 import { CampaignType } from '../../../types';
@@ -24,7 +24,7 @@ const renderComponent = (selectedCampaign: number | undefined) => {
 describe('CampaignSelected', () => {
   it('renders campaign details when a campaign is selected', () => {
     renderComponent(206764);
-    expect(screen.getByText(mockContext.campaigns[0].name)).toBeInTheDocument();
+    expect(screen.getByText('Introduction')).toBeInTheDocument();
     expect(
       screen.getByText(
         `A band of strangers brought together by a chance encounter with a troll in the Yawning Portal began a mad romp through the wards of Waterdeep. The group uncovered plot after villainous plot, involving some of the city\u2019s most influential, and infamous, figures.`
@@ -50,8 +50,8 @@ describe('CampaignSelected', () => {
         <CampaignSelected />
       </KankaContext.Provider>
     );
-    expect(screen.getByText(mockContext.campaigns[0].name)).toBeInTheDocument();
-    expect(screen.getByText('No description available.')).toBeInTheDocument();
+    expect(screen.queryByText('Introduction')).not.toBeInTheDocument();
+    expect(screen.getByText(NO_ENTRY_TEXT)).toBeInTheDocument();
   });
 
   it('calls setSelectedCampaign with undefined when "Back to Campaigns" button is clicked', () => {
