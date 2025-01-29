@@ -1,8 +1,8 @@
 import { Typography, Link, Button } from '@mui/material';
 import { OpenInNew } from '@mui/icons-material';
-import { CampaignType } from '../../types';
-import { StyledPanel } from './styles';
-import { useKankaContext } from '../../contexts';
+import { CampaignType } from '../../../types';
+import { StyledPanel } from '../styles';
+import { useKankaContext } from '../../../contexts';
 
 export const CampaignPreview = ({
   campaign,
@@ -18,7 +18,7 @@ export const CampaignPreview = ({
 
   const campaignUrl = `${baseUrl}/w/${campaign.id}`;
   return (
-    <StyledPanel>
+    <StyledPanel data-testid={`campaign-panel-preview-${campaign.id}`}>
       <Button onClick={() => setSelectedCampaign(campaign.id)}>
         <Typography>{campaign.name}</Typography>
       </Button>

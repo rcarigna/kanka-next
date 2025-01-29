@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import { campaigns } from '../../__mocks__/constants';
+import { campaigns } from '../../../__mocks__/constants';
 import { CampaignPreview } from './CampaignPreview';
-import { KankaContext } from '../../contexts';
-import { KankaContextType } from '../../types';
+import { KankaContext } from '../../../contexts';
+import { KankaContextType } from '../../../types';
 import userEvent from '@testing-library/user-event';
 
 describe('CampaignPreview', () => {
