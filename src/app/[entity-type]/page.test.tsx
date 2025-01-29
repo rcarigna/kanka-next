@@ -1,8 +1,11 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import Entities from './page';
-import { useRouter } from 'next/router';
 import * as api from '../../api';
+
+jest.mock('next/navigation', () => ({
+  useParams: jest.fn().mockReturnValue({ 'entity-type': 'character' }),
+}));
 
 jest.mock('../../components', () => ({
   PageWrapper: ({ children }: { children: React.ReactNode }) => (
@@ -21,9 +24,6 @@ jest.mock('next/router', () => ({
 
 describe('Entities Page', () => {
   beforeEach(() => {
-    (useRouter as jest.Mock).mockReturnValue({
-      query: { entityType: 'character' },
-    });
     jest.spyOn(api, 'fetchEntityMap').mockReturnValue([
       { id: 1, code: 'character' },
       { id: 2, code: 'location' },

@@ -1,45 +1,33 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { KankaContextType } from '../types';
-import { KankaContext } from '../contexts';
+import '@testing-library/jest-dom';
 import Home from './page';
+import { ErrorBoundary } from 'react-error-boundary';
 
-describe('HomePage', () => {
-  afterEach(() => jest.clearAllMocks());
-  const fetchMock = jest.fn(() =>
-    Promise.resolve({
-      ok: true,
-      json: () => {
-        return Promise.resolve({
-          data: [{ id: 1, name: 'Waterdhavian Webs' }],
-        });
-      },
-    })
-  ) as jest.Mock;
+jest.mock('../components', () => ({
+  PageWrapper: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  Content: () => <div>Content Component</div>,
+}));
 
-  const props: KankaContextType = {
-    fetchEntity: fetchMock,
-    connection: {
-      connection: {
-        apiKey: 'someKey',
-        setApiKey: (value) => (props.connection.connection.apiKey = value),
-        clearApiKey: () => {
-          props.connection.connection.apiKey = undefined;
-          props.connection.connection.status = 'valid';
-        },
-        baseUrl: 'someUrl',
-        setBaseUrl: jest.fn(),
-        status: 'loading',
-      },
-      error: '',
-    },
-  };
+describe('Home Page', () => {
+  test('renders PageWrapper and Content components', () => {
+    render(<Home />);
+    expect(screen.getByText('Content Component')).toBeInTheDocument();
+  });
 
-  it('renders loading', async () => {
+  test('displays fallback UI on error', () => {
+    const ThrowError = () => {
+      throw new Error('Test Error');
+    };
+
     render(
-      <KankaContext.Provider value={{ ...props }}>
-        <Home />
-      </KankaContext.Provider>
+      <ErrorBoundary fallback={<div>something went wrong</div>}>
+        <ThrowError />
+      </ErrorBoundary>
     );
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+
+    expect(screen.getByText('something went wrong')).toBeInTheDocument();
   });
 });

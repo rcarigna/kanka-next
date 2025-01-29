@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, List, ListItem, Box } from '@mui/material';
-import { fetchEntityMap } from '../../api';
+import { fetchEntityMap } from '../../../api';
 
 export const EntitiesPanel = () => {
   const entityMap = fetchEntityMap();

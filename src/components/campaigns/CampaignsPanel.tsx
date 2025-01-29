@@ -1,6 +1,6 @@
 import { CampaignType } from '../../types';
 import { CampaignPreview } from './CampaignPreview';
-import { EntityGrid } from '../EntityGrid';
+import { EntityGrid } from '../entities/EntityGrid/EntityGrid';
 
 export const CampaignsPanel = ({
   campaigns,

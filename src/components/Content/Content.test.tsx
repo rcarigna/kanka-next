@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { Content } from './Content';
 import { ConnectionType, KankaContextType } from '@/types';
-import { KankaContext } from '../contexts/KankaContext';
+import { KankaContext } from '../../contexts/KankaContext';
 
 describe('Content', () => {
   const props: KankaContextType = {

@@ -2,9 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ConnectionWrapper } from './ConnectionWrapper';
-import { useKankaContext } from '../contexts';
+import { useKankaContext } from '../../contexts';
 
-jest.mock('../contexts', () => ({
+jest.mock('../../contexts', () => ({
   useKankaContext: jest.fn(),
 }));
 

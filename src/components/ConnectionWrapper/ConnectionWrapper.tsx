@@ -1,8 +1,8 @@
 'use client';
 
 import { CircularProgress, Typography, Alert, Button } from '@mui/material';
-import { Login } from './Login';
-import { useKankaContext } from '../contexts';
+import { Login } from '../Login';
+import { useKankaContext } from '../../contexts';
 
 export const ConnectionWrapper = ({
   children,

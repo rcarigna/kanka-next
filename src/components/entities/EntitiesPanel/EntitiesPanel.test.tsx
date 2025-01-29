@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import * as api from '../../api';
+import * as api from '../../../api';
 import { EntitiesPanel } from './EntitiesPanel';
 
-jest.mock('../../api');
+jest.mock('../../../api');
 
 describe('Entity Index Page', () => {
   beforeEach(() => {

@@ -1,9 +1,9 @@
 'use client';
-import { CampaignsPanel } from './campaigns';
+import { CampaignsPanel } from '../campaigns';
 import { Typography, Button, Card } from '@mui/material';
-import { StyledCTAs } from '../app/styles/styles';
-import { useKankaContext } from '../contexts';
-import { ConnectionWrapper } from './ConnectionWrapper';
+import { StyledCTAs } from '../../app/styles/styles';
+import { useKankaContext } from '../../contexts';
+import { ConnectionWrapper } from '../ConnectionWrapper/ConnectionWrapper';
 import { useMemo } from 'react';
 
 const SelectCampaign = () => {

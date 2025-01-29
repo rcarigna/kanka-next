@@ -70,7 +70,7 @@ describe('EntityPanel', () => {
 
   it('should handle not being given an entity type', () => {
     // Assert that an error message is displayed if no entity type is provided.
-    render(<EntityPanel />);
+    render(<EntityPanel entityType={''} />);
     expect(screen.getByText('Invalid entity type')).toBeInTheDocument();
   });
 
