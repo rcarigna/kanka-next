@@ -4,17 +4,20 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { StyledPage, StyledMain } from './styles';
 import { ErrorBoundary } from 'react-error-boundary';
+import { KankaDataProvider } from '../../contexts';
 
 export const PageWrapper = ({ children }: { children: ReactNode }) => {
   return (
-    <StyledPage>
-      <StyledMain>
-        <Header />
-        <ErrorBoundary fallback={<div>something went wrong</div>}>
-          {children}
-        </ErrorBoundary>
-      </StyledMain>
-      <Footer />
-    </StyledPage>
+    <KankaDataProvider>
+      <StyledPage>
+        <StyledMain>
+          <Header />
+          <ErrorBoundary fallback={<div>something went wrong</div>}>
+            {children}
+          </ErrorBoundary>
+        </StyledMain>
+        <Footer />
+      </StyledPage>
+    </KankaDataProvider>
   );
 };

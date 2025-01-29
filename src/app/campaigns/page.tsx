@@ -3,14 +3,18 @@ import { PageWrapper } from '../../components';
 import { CampaignsPanel } from '../../components/campaigns';
 import { useKankaContext } from '../../contexts';
 
-const Campaigns: React.FC = () => {
+const InnerCampaigns: React.FC = () => {
   const { campaigns } = useKankaContext();
   if (campaigns === null) {
     return null;
   }
+  return <CampaignsPanel campaigns={campaigns} />;
+};
+
+const Campaigns: React.FC = () => {
   return (
     <PageWrapper>
-      <CampaignsPanel campaigns={campaigns} />
+      <InnerCampaigns />
     </PageWrapper>
   );
 };

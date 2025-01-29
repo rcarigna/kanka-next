@@ -10,7 +10,13 @@ import {
 import { fetchEntityMap, fetchEntitiesForType } from '../../../api';
 import { Entity } from './types';
 
-export const EntityPanel = ({ entityType }: { entityType: string }) => {
+export const EntityPanel = ({
+  entityType,
+  campaignId,
+}: {
+  entityType: string;
+  campaignId?: number;
+}) => {
   const entityMap = fetchEntityMap();
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -26,7 +32,7 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
     }
     if (entities === undefined) {
       setLoading(true);
-      fetchEntitiesForType(entityType)
+      fetchEntitiesForType({ entityType, selectedCampaign: campaignId })
         .then((data) => {
           setEntities(data);
           setLoading(false);
@@ -36,7 +42,7 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
           setLoading(false);
         });
     }
-  }, [entities, entityMap, entityType]);
+  }, [entities, entityMap, entityType, campaignId]);
 
   if (!entityType || !entityMap.some((entity) => entity.code === entityType)) {
     return (

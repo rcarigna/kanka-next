@@ -1,11 +1,20 @@
 'use client';
-import { useRouter } from 'next/router';
+import { useParams } from 'next/navigation';
 import { PageWrapper } from '../../components';
 import { EntityPanel } from '../../components/entities';
+import { useMemo } from 'react';
 
 const Entity: React.FC = () => {
-  const router = useRouter();
-  const { entityType } = router.query;
+  const params = useParams();
+
+  const entityType = useMemo(() => {
+    return params['entity-type'];
+  }, [params]);
+
+  if (!entityType) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <PageWrapper>
       <EntityPanel entityType={entityType as string} />
