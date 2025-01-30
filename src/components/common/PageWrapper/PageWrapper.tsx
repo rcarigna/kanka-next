@@ -1,10 +1,10 @@
 'use client';
 import { ReactNode } from 'react';
-import { Header } from './Header';
-import { Footer } from './Footer';
-import { StyledPage, StyledMain } from './styles';
+import { Header } from '../Header/Header';
+import { Footer } from '../Footer';
+import { StyledPage, StyledMain } from '../styles';
 import { ErrorBoundary } from 'react-error-boundary';
-import { KankaDataProvider } from '../../contexts';
+import { KankaDataProvider } from '../../../contexts';
 
 export const PageWrapper = ({ children }: { children: ReactNode }) => {
   return (

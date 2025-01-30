@@ -1,5 +1,6 @@
-import { CampaignHeader } from '../campaigns/CampaignHeader';
-import { StyledHeader, StyledLogo, StyledLogoContainer } from './styles';
+import { CampaignHeader } from '../../campaigns/CampaignHeader';
+import { StyledHeader, StyledLogo, StyledLogoContainer } from '../styles';
+import { Toolbar } from '../Toolbar';
 export const Header = () => (
   <StyledHeader>
     <StyledLogoContainer>
@@ -13,5 +14,6 @@ export const Header = () => (
       <StyledLogo src='/next.svg' alt='Next.js logo' width={180} height={38} />
     </StyledLogoContainer>
     <CampaignHeader />
+    <Toolbar />
   </StyledHeader>
 );

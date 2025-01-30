@@ -39,4 +39,13 @@ describe('CampaignsPanel', () => {
       ).toBeInTheDocument();
     });
   });
+
+  it('does not render if campaigns are null', () => {
+    const { queryByTestId } = render(
+      <KankaContext.Provider value={{ ...mockContext, campaigns: null }}>
+        <CampaignsPanel />
+      </KankaContext.Provider>
+    );
+    expect(queryByTestId('entity-grid-campaigns-panel')).toBeNull();
+  });
 });

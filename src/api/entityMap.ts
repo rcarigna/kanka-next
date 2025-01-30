@@ -1,9 +1,11 @@
-export type EntityType = { id: number; code: string };
+export type EntityType = { id: number; code: string; path?: string; };
 
 export const entityMap: EntityType[] = [
-    { "id": 0, "code": "campaigns" },
     {
-
+        "id": 0,
+        "code": "campaigns"
+    },
+    {
         "id": 1,
         "code": "character"
     },

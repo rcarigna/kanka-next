@@ -12,11 +12,13 @@ const Entity: React.FC = () => {
     return params['entity-type'];
   }, [params]);
 
-  console.log('entityType', entityType);
   return (
     <PageWrapper>
       {entityType ? (
-        <EntityPanel entityType={entityType as string} />
+        <EntityPanel
+          data-testID='entities-panel'
+          entityType={entityType as string}
+        />
       ) : (
         <Typography>No entity-type found</Typography>
       )}

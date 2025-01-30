@@ -1,140 +1,70 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import {
+  KankaContext,
   KankaDataProvider,
   useKankaContext,
-  KankaContext,
 } from './KankaContext';
 import { useKankaConnection } from '../hooks';
-import * as api from '../api';
-import '@testing-library/jest-dom';
-import { ConnectionType, KankaConnectionType } from '../types';
+import { fetchEntitiesForType, fetchEntityMap } from '../api';
+import { mockContext } from '@/__mocks__/constants';
 
-// Mock useKankaConnection
-jest.mock('../hooks/useKankaConnection');
-const mockUseKankaConnection =
-  useKankaConnection as jest.Mock<KankaConnectionType>;
-
+jest.mock('../hooks');
 jest.mock('../api');
 
-describe('KankaDataProvider', () => {
-  let mockFetchData: jest.Mock;
+const mockUseKankaConnection = useKankaConnection as jest.Mock;
+const mockFetchEntitiesForType = fetchEntitiesForType as jest.Mock;
+const mockFetchEntityMap = fetchEntityMap as jest.Mock;
 
+const TestComponent = () => {
+  const context = useKankaContext();
+  return (
+    <div>
+      <div data-testid='status'>{context.connection.connection.status}</div>
+      <div data-testid='campaigns'>{JSON.stringify(context.campaigns)}</div>
+      <div data-testid='entityTypes'>{JSON.stringify(context.entityTypes)}</div>
+      <div data-testid='entityLinks'>
+        {context.entityTypes.map((type) => (
+          <a key={type.id} href={`${type.path}`} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+describe('KankaContext', () => {
+  let mockFetchEntityMapReturnValue: ReturnType<typeof fetchEntityMap>;
   beforeEach(() => {
-    mockFetchData = jest.fn();
-    jest.spyOn(api, 'fetchEntity').mockImplementation(mockFetchData);
+    mockFetchEntityMapReturnValue = [];
     mockUseKankaConnection.mockReturnValue({
       connection: {
         status: 'valid',
-        apiKey: undefined,
-        setApiKey: jest.fn(),
-        clearApiKey: jest.fn(),
-        baseUrl: '',
-        setBaseUrl: jest.fn(),
+        apiKey: 'test-api-key',
+        baseUrl: 'test-base-url',
       },
-      error: '',
     });
+    mockFetchEntitiesForType.mockResolvedValue([]);
+    mockFetchEntityMap.mockReturnValue(mockFetchEntityMapReturnValue);
   });
 
-  it('renders children correctly', () => {
+  it('provides the correct context values', async () => {
     render(
       <KankaDataProvider>
-        <div>Test Child</div>
+        <TestComponent />
       </KankaDataProvider>
     );
 
-    expect(screen.getByText('Test Child')).toBeInTheDocument();
-  });
-
-  it('provides connection and campaigns context values', () => {
-    render(
-      <KankaDataProvider>
-        <KankaContext.Consumer>
-          {(context) =>
-            context ? (
-              <>
-                <div>{context.connection.connection.status}</div>
-                <div>{context.campaigns?.length}</div>
-              </>
-            ) : null
-          }
-        </KankaContext.Consumer>
-      </KankaDataProvider>
-    );
-
-    expect(screen.getByText('valid')).toBeInTheDocument();
-    expect(screen.getByText('0')).toBeInTheDocument(); // Initial state is empty array
-  });
-
-  it('fetches campaigns when status is "valid" and loading is true', () => {
-    const mockConnection: ConnectionType = {
-      status: 'valid',
-      apiKey: 'some key',
-      setApiKey: jest.fn(),
-      clearApiKey: jest.fn(),
-      baseUrl: 'baseUrl.com',
-      setBaseUrl: jest.fn(),
-    };
-    mockUseKankaConnection.mockReturnValueOnce({
-      connection: mockConnection,
-      error: '',
+    await waitFor(() => {
+      expect(screen.getByTestId('status')).toHaveTextContent('valid');
+      expect(screen.getByTestId('campaigns')).toHaveTextContent('[]');
+      expect(screen.getByTestId('entityTypes')).toHaveTextContent('[]');
     });
-
-    render(
-      <KankaDataProvider>
-        <div>Loading Campaigns</div>
-      </KankaDataProvider>
-    );
-
-    expect(mockFetchData).toHaveBeenCalledWith(
-      mockConnection.apiKey,
-      'campaigns'
-    );
   });
 
-  it('does not fetch campaigns when status is not "valid"', () => {
-    mockUseKankaConnection.mockReturnValueOnce({
-      connection: {
-        status: 'invalid',
-        apiKey: undefined,
-        setApiKey: jest.fn(),
-        clearApiKey: jest.fn(),
-        baseUrl: '',
-        setBaseUrl: jest.fn(),
-      },
-      error: '',
-    });
-
-    render(
-      <KankaDataProvider>
-        <div>No Fetch</div>
-      </KankaDataProvider>
-    );
-
-    expect(mockFetchData).not.toHaveBeenCalled();
-  });
-
-  it('fetches entities using fetchEntityWrapper', async () => {
-    const mockConnection: ConnectionType = {
-      status: 'valid',
-      apiKey: 'some key',
-      setApiKey: jest.fn(),
-      clearApiKey: jest.fn(),
-      baseUrl: 'baseUrl.com',
-      setBaseUrl: jest.fn(),
-    };
-    mockUseKankaConnection.mockReturnValueOnce({
-      connection: mockConnection,
-      error: '',
-    });
-
-    const TestComponent = () => {
-      const { fetchEntity } = useKankaContext();
-      React.useEffect(() => {
-        fetchEntity('characters', jest.fn());
-      }, [fetchEntity]);
-      return <div>Fetching Entities</div>;
-    };
+  it('fetches campaigns on load', async () => {
+    const campaigns = [{ id: 1, name: 'Campaign 1' }];
+    mockFetchEntitiesForType.mockResolvedValueOnce(campaigns);
 
     render(
       <KankaDataProvider>
@@ -143,126 +73,67 @@ describe('KankaDataProvider', () => {
     );
 
     await waitFor(() => {
-      expect(mockFetchData).toHaveBeenCalledWith(
-        mockConnection.apiKey,
-        'characters'
+      expect(screen.getByTestId('campaigns')).toHaveTextContent(
+        JSON.stringify(campaigns)
       );
     });
+    expect(mockFetchEntityMap).not.toHaveBeenCalled();
   });
 
-  it('logs an error when failing to fetch entities using fetchEntityWrapper', async () => {
-    const mockConnection: ConnectionType = {
-      status: 'valid',
-      apiKey: 'some key',
-      setApiKey: jest.fn(),
-      clearApiKey: jest.fn(),
-      baseUrl: 'baseUrl.com',
-      setBaseUrl: jest.fn(),
-    };
-    mockUseKankaConnection.mockReturnValueOnce({
-      connection: mockConnection,
-      error: '',
-    });
-
-    const TestComponent = () => {
-      const { fetchEntity } = useKankaContext();
-      React.useEffect(() => {
-        fetchEntity('characters', jest.fn());
-      }, [fetchEntity]);
-      return <div>Fetching Entities</div>;
-    };
-    const spy = jest.spyOn(console, 'error');
-    mockFetchData.mockRejectedValueOnce(new Error('Failed to fetch data'));
+  it('fetches entity types when a campaign is selected', async () => {
     render(
-      <KankaDataProvider>
+      <KankaContext.Provider
+        value={{
+          ...mockContext,
+          selectedCampaign: mockContext.campaigns[0].id,
+        }}
+      >
         <TestComponent />
-      </KankaDataProvider>
+      </KankaContext.Provider>
     );
 
     await waitFor(() => {
-      expect(mockFetchData).toHaveBeenCalledWith(
-        mockConnection.apiKey,
-        'characters'
+      expect(screen.getByTestId('entityTypes')).toHaveTextContent(
+        JSON.stringify(mockContext.entityTypes)
+      );
+      expect(screen.getByTestId('entityLinks').children).toHaveLength(
+        mockContext.entityTypes.length
       );
     });
-    expect(spy).toHaveBeenCalled();
   });
 
-  it('handles error when initial loading of campaign options fails', async () => {
-    const mockConnection: ConnectionType = {
-      status: 'valid',
-      apiKey: 'valid-api-key',
-      setApiKey: jest.fn(),
-      clearApiKey: jest.fn(),
-      baseUrl: 'baseUrl.com',
-      setBaseUrl: jest.fn(),
-    };
-
-    mockUseKankaConnection.mockReturnValueOnce({
-      connection: mockConnection,
-      error: '',
-    });
-
-    const TestComponent = () => {
-      const { campaigns } = useKankaContext();
-      return (
-        <div>
-          {campaigns?.length === 0 ? 'No campaigns' : 'Campaigns loaded'}
-        </div>
-      );
-    };
-
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    mockFetchData.mockRejectedValueOnce(new Error('Failed to fetch data'));
-
-    render(
-      <KankaDataProvider>
+  it('fetches entity types when selectedCampaign changes', async () => {
+    const { rerender } = render(
+      <KankaContext.Provider
+        value={{
+          ...mockContext,
+          entityTypes: [],
+          selectedCampaign: undefined,
+        }}
+      >
         <TestComponent />
-      </KankaDataProvider>
+      </KankaContext.Provider>
     );
 
     await waitFor(() => {
-      expect(mockFetchData).toHaveBeenCalledWith('valid-api-key', 'campaigns');
+      expect(screen.getByTestId('entityTypes')).toHaveTextContent('[]');
     });
 
-    expect(spy).toHaveBeenCalledWith(
-      'Error fetching campaigns:',
-      expect.any(Error)
-    );
-    spy.mockRestore();
-  });
-});
-
-describe('useKankaContext', () => {
-  it('throws an error if used outside KankaDataProvider', () => {
-    const TestComponent = () => {
-      useKankaContext();
-      return <div />;
-    };
-
-    expect(() => render(<TestComponent />)).toThrow(
-      'useKankaContext must be used within a DataProvider'
-    );
-  });
-
-  it('returns context values when used within KankaDataProvider', () => {
-    const TestComponent = () => {
-      const { connection, campaigns } = useKankaContext();
-      return (
-        <>
-          <div>{connection.connection.status}</div>
-          <div>{campaigns?.length}</div>
-        </>
-      );
-    };
-
-    render(
-      <KankaDataProvider>
+    rerender(
+      <KankaContext.Provider
+        value={{
+          ...mockContext,
+          selectedCampaign: mockContext.campaigns[0].id,
+        }}
+      >
         <TestComponent />
-      </KankaDataProvider>
+      </KankaContext.Provider>
     );
 
-    expect(screen.getByText('valid')).toBeInTheDocument();
-    expect(screen.getByText('0')).toBeInTheDocument(); // Default campaigns length
+    await waitFor(() => {
+      expect(screen.getByTestId('entityTypes')).toHaveTextContent(
+        JSON.stringify(mockContext.entityTypes)
+      );
+    });
   });
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   List,
@@ -7,44 +7,50 @@ import {
   Typography,
   CircularProgress,
 } from '@mui/material';
-import { fetchEntityMap, fetchEntitiesForType } from '../../../api';
 import { Entity } from './types';
+import { useKankaContext } from '@/contexts';
 
-export const EntityPanel = ({
-  entityType,
-  campaignId,
-}: {
-  entityType: string;
-  campaignId?: number;
-}) => {
-  const entityMap = fetchEntityMap();
+export const EntityPanel = ({ entityType }: { entityType: string }) => {
+  const { entityTypes, selectedCampaign, fetchEntity } = useKankaContext();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [entities, setEntities] = useState<Entity[] | undefined>(undefined);
 
+  const loadEntities = useCallback(async (results: Entity[]) => {
+    setEntities(results);
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
     if (!entityType) {
       return;
     }
-    if (!entityMap.some((entity) => entity.code === entityType)) {
+    if (!entityTypes.some((entity) => entity.code === entityType)) {
       return;
     }
     if (entities === undefined) {
       setLoading(true);
-      fetchEntitiesForType({ entityType, selectedCampaign: campaignId })
-        .then((data) => {
-          setEntities(data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          setError(err);
-          setLoading(false);
-        });
+      try {
+        fetchEntity(entityType, loadEntities);
+      } catch (err) {
+        setError(err as Error);
+        setLoading(false);
+      }
     }
-  }, [entities, entityMap, entityType, campaignId]);
+  }, [
+    entities,
+    entityType,
+    entityTypes,
+    fetchEntity,
+    loadEntities,
+    selectedCampaign,
+  ]);
 
-  if (!entityType || !entityMap.some((entity) => entity.code === entityType)) {
+  if (
+    !entityType ||
+    !entityTypes.some((entity) => entity.code === entityType)
+  ) {
     return (
       <Typography
         variant='h6'
@@ -56,6 +62,7 @@ export const EntityPanel = ({
     );
   }
   if (loading) {
+    console.log('loading');
     return (
       <Box>
         <CircularProgress role='progressbar' />
@@ -64,13 +71,14 @@ export const EntityPanel = ({
     );
   }
   if (error) {
+    console.log('error');
     return (
       <Typography variant='h6' color='error' data-testid='entity-error-message'>
         {error.message}
       </Typography>
     );
   }
-
+  console.log(`entities: ${entities?.length}`);
   return (
     <Card
       data-testid='entities-panel'

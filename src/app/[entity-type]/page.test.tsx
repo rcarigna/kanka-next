@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'next/navigation';
-
+import { KankaContext } from '@/contexts';
+import { mockContext } from '@/__mocks__/constants';
 import { render, screen, waitFor } from '@testing-library/react';
 import Entities from './page';
 import * as api from '../../api';
@@ -34,11 +35,18 @@ describe('Entities Page', () => {
   });
 
   it('renders PageWrapper and EntitiesPanel', async () => {
-    render(<Entities />);
-    await waitFor(() =>
-      expect(screen.getByTestId('entities-panel')).toBeInTheDocument()
+    (useParams as jest.Mock).mockReturnValue({ 'entity-type': 'character' });
+
+    render(
+      <KankaContext.Provider value={mockContext}>
+        <Entities />
+      </KankaContext.Provider>
     );
-    expect(screen.getByText('Character 1')).toBeInTheDocument();
+
+    expect(mockContext.fetchEntity).toHaveBeenCalledWith(
+      'character',
+      expect.any(Function)
+    );
   });
   it('renders loading when entityType is not defined', async () => {
     (useParams as jest.Mock).mockReturnValue({ 'entity-type': undefined });

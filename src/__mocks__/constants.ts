@@ -60,5 +60,53 @@ export const mockContext: KankaContextType = {
     campaigns: campaigns,
     fetchEntity: jest.fn(),
     selectedCampaign: undefined,
-    setSelectedCampaign: jest.fn(),
+    setSelectedCampaign: jest.fn().mockImplementation((id: number) => { mockContext.selectedCampaign = id }),
+    entityTypes: [{
+        "id": 0,
+        "code": "campaigns"
+    },
+    {
+        "id": 1,
+        "code": "character"
+    },
+    {
+        "id": 2,
+        "code": "family"
+    },
+    {
+        "id": 3,
+        "code": "location"
+    },
+    {
+        "id": 4,
+        "code": "organisation"
+    },
+    {
+        "id": 5,
+        "code": "item"
+    },
+    {
+        "id": 6,
+        "code": "note"
+    },
+    {
+        "id": 7,
+        "code": "event"
+    },
+    {
+        "id": 8,
+        "code": "calendar"
+    },
+    {
+        "id": 9,
+        "code": "race"
+    },
+    {
+        "id": 10,
+        "code": "quest"
+    },
+    {
+        "id": 11,
+        "code": "journal"
+    }],
 };

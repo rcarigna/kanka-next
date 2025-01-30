@@ -24,7 +24,7 @@ export const validateConnection = async (
     }
 };
 
-export const fetchEntityMap = () => entityMap
+export const fetchEntityMap = () => entityMap;
 
 export const generateEntityPath = ({ entityType, selectedCampaign }: { entityType: string; selectedCampaign?: number }): string => {
     const entity = entityMap.find((entity) => entity.code === entityType);
@@ -38,7 +38,13 @@ export const generateEntityPath = ({ entityType, selectedCampaign }: { entityTyp
     }
     return `${baseUrl}/campaigns/${selectedCampaign}/${entity.code}`;
 }
-
+/**
+ * Fetches all instances of an entity of a given type for the selected campaign.
+ * @param apiKey 
+ * @param entityType 
+ * @param selectedCampaign 
+ * @returns 
+ */
 export const fetchEntity = async (
     apiKey: string,
     entityType: string,
@@ -57,7 +63,11 @@ export const fetchEntity = async (
     const { data } = await response.json();
     return data;
 };
-
+/**
+ * Fetches an instance of an entity type by said instance's id. NOT YET IMPLEMENTED
+ * @param param0 
+ * @returns 
+ */
 export const fetchEntityById = async ({ entityType, id }: { entityType: string, id: number }): Promise<Entity> => {
     const entity_id = entityMap.find((entity) => entity.code === entityType)?.id;
     if (!entity_id) {
@@ -71,26 +81,12 @@ export const fetchEntityById = async ({ entityType, id }: { entityType: string, 
     };
 }
 
+/**
+ * Fetches all instances of an entity type for the selected campaign with an existing API connection.
+ * @param param0 
+ * @returns 
+ */
 export const fetchEntitiesForType = async ({ entityType, selectedCampaign }: { entityType: string; selectedCampaign?: number }): Promise<Entity[]> => {
     const { apiKey } = getApiConfig();
     return fetchEntity(apiKey, entityType, selectedCampaign);
 };
-// export const createEntity = async (
-//     apiKey: string,
-//     baseUrl: string,
-//     entityType: string,
-//     entityData: Record<string, any>
-// ): Promise<any> => {
-//     const endpoint = `${baseUrl}/${entityType}`;
-//     const response = await fetch(endpoint, {
-//         method: 'POST',
-//         headers: commonHeaders(apiKey),
-//         body: JSON.stringify(entityData),
-//     });
-
-//     if (!response.ok) {
-//         throw new Error(`Failed to create ${entityType}`);
-//     }
-
-//     return response.json();
-// };

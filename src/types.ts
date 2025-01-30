@@ -1,3 +1,5 @@
+import { EntityType } from "./api/entityMap";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type CampaignType = {
     id: number;
@@ -26,6 +28,7 @@ export type KankaContextType = {
     fetchEntity: (entityType: string, save: (data: any[]) => void) => void;
     selectedCampaign?: number;
     setSelectedCampaign: (value: number | undefined) => void;
+    entityTypes: EntityType[];
     // fetchEntitiesForType: (entityType: string, save: (data: any[]) => void) => void;
     // fetchEntityById: ({ entityType, id }: { entityType: string; id: number }) => void;
 };

@@ -8,11 +8,20 @@ import React, {
 } from 'react';
 import { CampaignType, KankaContextType } from '../types';
 import { useKankaConnection } from '../hooks';
-import { fetchEntity } from '../api';
+import { fetchEntitiesForType, fetchEntityMap } from '../api';
+import { EntityType } from '@/api/entityMap';
 
 export const KankaContext = createContext<KankaContextType | undefined>(
   undefined
 );
+
+export const loadEntities = async () => {
+  const baseEntities = fetchEntityMap();
+  return baseEntities.map((entity) => ({
+    ...entity,
+    path: `./${entity.code}`,
+  }));
+};
 
 export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const kankaConnection = useKankaConnection();
@@ -23,12 +32,51 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     undefined
   );
 
+  const [entities, setEntities] = useState<EntityType[]>([]);
+
+  useEffect(() => {
+    console.log('Selected campaign:', selectedCampaign);
+    const fetchEntities = async () => {
+      console.log('Entities.length:', entities?.length);
+      if (selectedCampaign && entities.length === 0) {
+        try {
+          const loadedEntities = await loadEntities();
+          console.log('Loaded entities:', JSON.stringify(loadedEntities));
+          setEntities(loadedEntities);
+        } catch (err) {
+          console.error('Error loading entities:', err);
+        }
+      }
+    };
+    fetchEntities();
+  }, [selectedCampaign, entities]);
+
+  // Wrapper for fetching instances of an entity tynpe
+  const fetchEntityWrapper = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async (entityType: string, save: (data: any[]) => void) => {
+      if (status === 'valid') {
+        try {
+          const data = await fetchEntitiesForType({
+            entityType,
+            selectedCampaign,
+          });
+          save(data);
+        } catch (err) {
+          console.error(`Error fetching ${entityType}:`, err);
+        }
+      }
+    },
+    [selectedCampaign, status]
+  );
+
   useEffect(() => {
     const loadCampaignOptions = async () => {
       if (status === 'valid' && apiKey && baseUrl) {
         try {
-          const data = await fetchEntity(apiKey, 'campaigns');
-          setCampaigns(data);
+          // const data = await fetchEntity(apiKey, 'campaigns');
+          // setCampaigns(data);
+          fetchEntityWrapper('campaigns', setCampaigns);
         } catch (err) {
           console.error('Error fetching campaigns:', err);
         }
@@ -36,23 +84,7 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     };
 
     loadCampaignOptions();
-  }, [status, apiKey, baseUrl]);
-
-  // Wrapper for fetching entities
-  const fetchEntityWrapper = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async (entityType: string, save: (data: any[]) => void) => {
-      if (status === 'valid' && apiKey) {
-        try {
-          const data = await fetchEntity(apiKey, entityType);
-          save(data);
-        } catch (err) {
-          console.error(`Error fetching ${entityType}:`, err);
-        }
-      }
-    },
-    [status, apiKey]
-  );
+  }, [status, apiKey, baseUrl, fetchEntityWrapper]);
 
   return (
     <KankaContext.Provider
@@ -62,6 +94,7 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
         fetchEntity: fetchEntityWrapper,
         selectedCampaign,
         setSelectedCampaign,
+        entityTypes: entities,
       }}
     >
       {children}
