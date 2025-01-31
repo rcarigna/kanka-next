@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
@@ -7,7 +8,6 @@ import {
   Typography,
   CircularProgress,
 } from '@mui/material';
-import { Entity } from './types';
 import { useKankaContext } from '@/contexts';
 
 export const EntityPanel = ({ entityType }: { entityType: string }) => {
@@ -15,9 +15,9 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
-  const [entities, setEntities] = useState<Entity[] | undefined>(undefined);
+  const [entities, setEntities] = useState<any[] | undefined>(undefined);
 
-  const loadEntities = useCallback(async (results: Entity[]) => {
+  const loadEntities = useCallback(async (results: any[]) => {
     setEntities(results);
     setLoading(false);
   }, []);

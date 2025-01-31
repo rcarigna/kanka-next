@@ -2,6 +2,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import * as api from '../../../api';
 import { EntityInstance } from './EntityInstance';
 import { CharacterEntity } from '../EntityPanel/types';
+import { KankaContext } from '@/contexts';
+import { mockContext } from '@/__mocks__/constants';
 
 jest.mock('../../../api');
 
@@ -17,11 +19,23 @@ describe('EntityInstance', () => {
     mockFetchData = jest.fn();
     mockFetchData.mockResolvedValue(character);
 
-    jest.spyOn(api, 'fetchEntityById').mockImplementation(mockFetchData);
+    jest.spyOn(api, 'getEntityByID').mockImplementation(mockFetchData);
     jest.spyOn(api, 'fetchEntityMap').mockReturnValue([
-      { id: 1, code: 'character' },
-      { id: 2, code: 'location' },
-      { id: 3, code: 'item' },
+      {
+        id: 1,
+        code: 'character',
+        path: '',
+      },
+      {
+        id: 2,
+        code: 'location',
+        path: '',
+      },
+      {
+        id: 3,
+        code: 'item',
+        path: '',
+      },
     ]);
   });
 
@@ -30,35 +44,56 @@ describe('EntityInstance', () => {
   });
 
   it('should render the entity details', async () => {
-    render(<EntityInstance entityType='character' id={character.id} />);
+    render(
+      <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
+        <EntityInstance entityType='character' id={character.id} />
+      </KankaContext.Provider>
+    );
     await waitFor(async () => {
       expect(await screen.findByText(character.name)).toBeInTheDocument();
     });
   });
 
   it('should handle invalid or non-existent entity IDs', async () => {
-    (api.fetchEntityById as jest.Mock).mockRejectedValue(
+    (api.getEntityByID as jest.Mock).mockRejectedValueOnce(
       new Error('Not found')
     );
-    render(<EntityInstance entityType='character' id={character.id} />);
+    render(
+      <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
+        <EntityInstance entityType='character' id={character.id} />
+      </KankaContext.Provider>
+    );
     await waitFor(async () => {
       expect(screen.getByText('Not found')).toBeInTheDocument();
     });
   });
   it('should handle not being passed an entity type', async () => {
-    render(<EntityInstance entityType='' id={character.id} />);
+    render(
+      <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
+        <EntityInstance entityType='' id={character.id} />
+      </KankaContext.Provider>
+    );
     await waitFor(async () => {
       expect(screen.getByText('Invalid entity type')).toBeInTheDocument();
     });
   });
   it('should handle not being passed a character ID', async () => {
-    render(<EntityInstance entityType='character' />);
+    render(
+      <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
+        {/*  @ts-expect-error - testing invalid input */}
+        <EntityInstance entityType='character' />
+      </KankaContext.Provider>
+    );
     await waitFor(async () => {
       expect(screen.getByText('Invalid entity ID')).toBeInTheDocument();
     });
   });
   it('should handle unknown entity types', async () => {
-    render(<EntityInstance entityType='invalid-type' id={character.id} />);
+    render(
+      <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
+        <EntityInstance entityType='invalid-type' id={character.id} />
+      </KankaContext.Provider>
+    );
     await waitFor(async () => {
       expect(
         screen.getByText('Invalid entity type: invalid-type')
@@ -66,12 +101,41 @@ describe('EntityInstance', () => {
     });
   });
   it('should handle when no entities of that id exist', async () => {
-    (api.fetchEntityById as jest.Mock).mockResolvedValue(undefined);
-    render(<EntityInstance entityType='character' id={character.id} />);
+    (api.getEntityByID as jest.Mock).mockResolvedValueOnce(undefined);
+    render(
+      <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
+        <EntityInstance entityType='character' id={character.id} />
+      </KankaContext.Provider>
+    );
     await waitFor(async () => {
       expect(
         screen.getByText('No entities with id 1 of type character available')
       ).toBeInTheDocument();
+    });
+  });
+
+  it('renders correctly when there is no selected campaign and it is done loading', async () => {
+    // jest.spyOn(api, 'getEntityByID').mockImplementation(() => {
+    //   console.log(`in api.getEntityByID mock`);
+    //   return Promise.resolve(undefined);
+    // });
+    (mockFetchData as jest.Mock).mockImplementation(() => {
+      console.log(`in api.getEntityByID mock`);
+      return Promise.resolve(undefined);
+    });
+    render(
+      <KankaContext.Provider
+        value={{ ...mockContext, selectedCampaign: undefined }}
+      >
+        <EntityInstance entityType='character' id={1} />
+      </KankaContext.Provider>
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    );
+    await waitFor(() => {
+      expect(screen.getByText('No campaign selected')).toBeInTheDocument();
     });
   });
 });

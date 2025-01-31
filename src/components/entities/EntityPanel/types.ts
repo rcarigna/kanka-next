@@ -28,4 +28,3 @@ export type CharacterEntity = {
     is_dead?: boolean;
     traits?: Array<unknown>;
 };
-export type Entity = CharacterEntity;

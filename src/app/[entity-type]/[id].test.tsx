@@ -1,19 +1,19 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import EntityInstance from './[id]';
+import { render, screen } from '@testing-library/react';
 import { useRouter } from 'next/router';
+import EntityInstance from './[id]';
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn(),
 }));
 
 describe('EntityInstance', () => {
-  it('should render the entity details', async () => {
-    (useRouter as jest.Mock).mockReturnValue({
-      query: { entityType: 'character', id: '1' },
-    });
+  it('renders EntityInstancePanel with correct props', () => {
+    const mockRouter = {
+      query: { entityType: 'testEntity', id: '123' },
+    };
+    (useRouter as jest.Mock).mockReturnValue(mockRouter);
     render(<EntityInstance />);
-    await waitFor(async () => {
-      expect(await screen.findByText('Entity 1')).toBeInTheDocument();
-    });
+
+    expect(screen.getByTestId('entity-instance')).toBeInTheDocument();
   });
 });

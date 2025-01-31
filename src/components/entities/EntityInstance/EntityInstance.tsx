@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Box, Typography, CircularProgress } from '@mui/material';
-import { fetchEntityMap, fetchEntityById } from '../../../api';
-import { Entity } from '../EntityPanel/types';
+import { fetchEntityMap, getEntityByID } from '../../../api';
+import { useKankaContext } from '@/contexts';
 
 export const EntityInstance = ({
   entityType,
@@ -10,22 +10,29 @@ export const EntityInstance = ({
   entityType: string;
   id: number;
 }) => {
+  const { selectedCampaign } = useKankaContext();
+
   const entityMap = fetchEntityMap();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
-  const [entity, setEntity] = useState<Entity | undefined>(undefined);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [entity, setEntity] = useState<any | undefined>(undefined);
 
   useEffect(() => {
-    if (!entityType || !id) {
+    if (!entityType || !id || !selectedCampaign) {
+      setLoading(false);
       return;
     }
+
     if (!entityMap.some((entity) => entity.code === entityType)) {
+      setLoading(false);
       return;
     }
+
     if (entity === undefined) {
       setLoading(true);
-      fetchEntityById({ entityType, id })
+      getEntityByID(entityType, id, selectedCampaign)
         .then((data) => {
           setEntity(data);
           setLoading(false);
@@ -34,9 +41,22 @@ export const EntityInstance = ({
           setError(err);
           setLoading(false);
         });
+    } else {
+      setLoading(false);
     }
-  }, [entity, entityMap, entityType, id]);
+  }, [entityType, id, selectedCampaign, entity, entityMap]);
 
+  if (!loading && !selectedCampaign) {
+    return (
+      <Typography
+        variant='h6'
+        color='error'
+        data-testid='entity-campaign-error-message'
+      >
+        No campaign selected
+      </Typography>
+    );
+  }
   if (!id) {
     return (
       <Typography
@@ -74,7 +94,6 @@ export const EntityInstance = ({
       </Typography>
     );
   }
-
   return (
     <Card
       data-testid='entities-panel'

@@ -1,5 +1,7 @@
 import { EntityType } from "./api/entityMap";
 
+export type { EntityType };
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type CampaignType = {
     id: number;
