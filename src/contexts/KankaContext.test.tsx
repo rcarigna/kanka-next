@@ -76,7 +76,7 @@ describe('KankaContext', () => {
 
   it('fetches campaigns on load', async () => {
     const campaigns = [{ id: 1, name: 'Campaign 1' }];
-    mockUseCampaigns.mockReturnValueOnce({ campaigns });
+    mockUseCampaigns.mockImplementation(() => ({ campaigns }));
 
     render(
       <KankaDataProvider>

@@ -1,4 +1,11 @@
-import React, { createContext, useContext, ReactNode, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useMemo,
+  useEffect,
+} from 'react';
 import { KankaContextType } from '../types';
 import {
   useCampaigns,
@@ -16,16 +23,35 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const [selectedCampaign, setSelectedCampaign] = useState<number | undefined>(
     undefined
   );
-  const { campaigns } = useCampaigns();
-  const { entities } = useEntities(selectedCampaign);
 
+  const [connectionReady, setConnectionReady] = useState<boolean>(false);
+  const {
+    campaigns,
+    error: campaignsError,
+    resetError: resetCampaignsError,
+  } = useCampaigns(connectionReady);
+
+  const { entities } = useEntities(selectedCampaign);
   const { fetchEntity } = useFetchEntity(selectedCampaign);
+
+  useEffect(() => {
+    if (kankaConnection.connection.status === 'valid') {
+      setConnectionReady(true);
+    }
+  }, [kankaConnection.connection.status]);
+
+  useEffect(() => {
+    if (campaignsError) {
+      console.error(campaignsError);
+      resetCampaignsError();
+    }
+  }, [campaignsError, resetCampaignsError]);
 
   return (
     <KankaContext.Provider
       value={{
         connection: kankaConnection,
-        campaigns,
+        campaigns: useMemo(() => campaigns ?? [], [campaigns]),
         fetchEntity,
         selectedCampaign,
         setSelectedCampaign,

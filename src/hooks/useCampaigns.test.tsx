@@ -25,7 +25,7 @@ describe('useCampaigns', () => {
     ];
     (getCampaigns as jest.Mock).mockResolvedValue(mockCampaigns);
 
-    const { result, waitForNextUpdate } = renderHook(() => useCampaigns());
+    const { result, waitForNextUpdate } = renderHook(() => useCampaigns(true));
 
     await waitForNextUpdate();
 
@@ -37,11 +37,17 @@ describe('useCampaigns', () => {
     const mockError = new Error('Failed to fetch campaigns');
     (getCampaigns as jest.Mock).mockRejectedValue(mockError);
 
-    const { result, waitForNextUpdate } = renderHook(() => useCampaigns());
+    const { result, waitForNextUpdate } = renderHook(() => useCampaigns(true));
 
     await waitForNextUpdate();
 
-    expect(result.current.campaigns).toEqual([]);
+    expect(result.current.campaigns).toEqual(undefined);
     expect(result.current.error).toEqual(mockError);
+  });
+
+  it('should not fetch campaigns if connection is not ready', async () => {
+    const { result } = renderHook(() => useCampaigns(false));
+    expect(result.current.campaigns).toEqual(undefined);
+    expect(result.current.error).toBeNull();
   });
 });
