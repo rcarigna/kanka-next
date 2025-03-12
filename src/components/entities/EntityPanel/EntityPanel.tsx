@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
+import useSWR from 'swr';
 import {
   Card,
   List,
@@ -9,43 +10,23 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useKankaContext } from '@/contexts';
+import { fetchEntitiesForType } from '@/api';
 
 export const EntityPanel = ({ entityType }: { entityType: string }) => {
-  const { entityTypes, selectedCampaign, fetchEntity } = useKankaContext();
-
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [entities, setEntities] = useState<any[] | undefined>(undefined);
-
-  const loadEntities = useCallback(async (results: any[]) => {
-    setEntities(results);
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (!entityType) {
-      return;
-    }
-    if (!entityTypes.some((entity) => entity.code === entityType)) {
-      return;
-    }
-    if (entities === undefined) {
-      setLoading(true);
-      try {
-        fetchEntity(entityType, loadEntities);
-      } catch (err) {
-        setError(err as Error);
-        setLoading(false);
-      }
-    }
-  }, [
-    entities,
-    entityType,
-    entityTypes,
-    fetchEntity,
-    loadEntities,
-    selectedCampaign,
-  ]);
+  const { entityTypes, selectedCampaign } = useKankaContext();
+  console.log(`entityType: ${entityType}`);
+  console.log(`selectedCampaign: ${selectedCampaign}`);
+  const {
+    data: entities,
+    isLoading: loading,
+    error,
+  } = useSWR(
+    selectedCampaign ? ['entities', selectedCampaign, entityType] : null,
+    fetchEntitiesForType
+  );
+  console.log(`entities: ${entities?.length}`);
+  console.log(`loading: ${loading}`);
+  console.log(`error: ${error}`);
 
   if (
     !entityType ||
@@ -88,7 +69,7 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
         <Box>No entities of type {entityType} available</Box>
       ) : (
         <List>
-          {entities?.map((entity) => (
+          {entities?.map((entity: any) => (
             <ListItem key={entity.id}>
               <a href={`/${entityType}/${entity.id}`}>{entity.name}</a>
             </ListItem>

@@ -3,8 +3,16 @@ import { EntityPanel } from './EntityPanel';
 import { KankaContext } from '@/contexts';
 import { mockContext } from '@/__mocks__/constants';
 import { CharacterEntity } from './types';
+import useSWR from 'swr';
 
 jest.mock('../../../api');
+jest.mock('swr');
+const mockUseSWR = (useSWR as jest.Mock).mockReturnValue({
+  data: undefined,
+  error: undefined,
+});
+const mockCampaigns = [{ id: 1, name: 'Campaign 1' }];
+const mockEntityTypes = [{ id: 1, code: 'character' }];
 
 describe('EntityPanel', () => {
   const characterMocks: CharacterEntity[] = [
@@ -21,12 +29,18 @@ describe('EntityPanel', () => {
       tags: ['tag3', 'tag4'],
     },
   ];
-
-  const mockFetchEntity = jest.fn((entityType, callback) => {
-    callback(characterMocks);
-  });
   beforeEach(() => {
-    (mockContext.fetchEntity as jest.Mock).mockImplementation(mockFetchEntity);
+    mockUseSWR.mockImplementation((key) => {
+      console.log(`in mockUseSWR: ${key}`);
+      if (key === 'campaigns') {
+        return { data: mockCampaigns, error: undefined };
+      } else if (Array.isArray(key) && key[0] === 'entityTypes') {
+        return { data: mockEntityTypes, error: undefined };
+      } else if (Array.isArray(key) && key[2] === 'character') {
+        return { data: characterMocks, error: undefined };
+      }
+      return { data: undefined, error: undefined };
+    });
   });
   afterEach(() => {
     jest.restoreAllMocks();
@@ -35,23 +49,26 @@ describe('EntityPanel', () => {
     // Assert that the entity list is displayed correctly.
     // Assert that each entity links to the correct route (e.g., /character/1, /character/2).
     render(
-      <KankaContext.Provider value={mockContext}>
+      <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
         <EntityPanel entityType='character' />
       </KankaContext.Provider>
     );
-    expect(mockContext.fetchEntity).toHaveBeenCalledTimes(1);
-    characterMocks.forEach((character) => {
-      expect(screen.getByText(character.name)).toBeInTheDocument();
+    expect(mockUseSWR).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      characterMocks.forEach((character) => {
+        expect(screen.getByText(character.name)).toBeInTheDocument();
 
-      const link = screen.getByRole('link', { name: character.name });
-      expect(link).toHaveAttribute('href', `/character/${character.id}`);
+        const link = screen.getByRole('link', { name: character.name });
+        expect(link).toHaveAttribute('href', `/character/${character.id}`);
+      });
     });
   });
 
   it('should display a fallback message if no entities exist for the type', async () => {
-    mockFetchEntity.mockImplementationOnce((entityType, callback) =>
-      callback([])
-    );
+    (useSWR as jest.Mock).mockReturnValueOnce({
+      data: [],
+      error: undefined,
+    });
     render(
       <KankaContext.Provider value={mockContext}>
         <EntityPanel entityType='character' />
@@ -86,11 +103,13 @@ describe('EntityPanel', () => {
   });
 
   it('should display an error message if the API call fails', async () => {
-    // Mock the API to reject the promise with an error.
-    // Assert that an error message is displayed.
-    const error = new Error('Failed to fetch entities');
-    mockFetchEntity.mockImplementationOnce(() => {
-      throw error;
+    const error: Error = {
+      message: 'Failed to fetch entities',
+      name: '',
+    };
+    (useSWR as jest.Mock).mockReturnValueOnce({
+      data: [],
+      error: error,
     });
     render(
       <KankaContext.Provider value={mockContext}>

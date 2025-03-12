@@ -1,12 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import { TextField, Button, FormControl, Link } from '@mui/material';
-import { useKankaContext } from '../../contexts';
 import { StyledKeyFooter, StyledHelperLink } from '../../app/styles/styles';
+import { useKankaConnection } from '@/hooks';
 
 export const Login: React.FC = () => {
   const [keyInput, setKeyInput] = useState('');
-  const { connection } = useKankaContext().connection;
+  const { connection } = useKankaConnection();
 
   const handleLogin = () => {
     if (keyInput !== '') {

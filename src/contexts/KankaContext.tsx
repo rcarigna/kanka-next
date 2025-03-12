@@ -6,56 +6,56 @@ import React, {
   useMemo,
   useEffect,
 } from 'react';
+import useSWR from 'swr';
 import { KankaContextType } from '../types';
-import {
-  useCampaigns,
-  useEntities,
-  useFetchEntity,
-  useKankaConnection,
-} from '../hooks';
+import { useKankaConnection } from '../hooks';
+import { getCampaigns, getEntityTypes } from '../api/kankaApi';
 
 export const KankaContext = createContext<KankaContextType | undefined>(
   undefined
 );
 
 export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
-  const kankaConnection = useKankaConnection();
+  const { connection } = useKankaConnection();
+  const { status } = connection;
+
   const [selectedCampaign, setSelectedCampaign] = useState<number | undefined>(
-    undefined
+    () => {
+      const savedCampaign = localStorage.getItem('selectedCampaign');
+      return savedCampaign ? Number(savedCampaign) : undefined;
+    }
   );
 
-  const [connectionReady, setConnectionReady] = useState<boolean>(false);
-  const {
-    campaigns,
-    error: campaignsError,
-    resetError: resetCampaignsError,
-  } = useCampaigns(connectionReady);
+  const { data: campaigns, error: campaignsError } = useSWR(
+    status === 'valid' ? 'campaigns' : null,
+    getCampaigns
+  );
 
-  const { entities } = useEntities(selectedCampaign);
-  const { fetchEntity } = useFetchEntity(selectedCampaign);
-
-  useEffect(() => {
-    if (kankaConnection.connection.status === 'valid') {
-      setConnectionReady(true);
-    }
-  }, [kankaConnection.connection.status]);
+  const { data: entityTypes, error: entityTypeError } = useSWR(
+    selectedCampaign ? ['entityTypes', selectedCampaign] : null,
+    getEntityTypes
+  );
 
   useEffect(() => {
     if (campaignsError) {
       console.error(campaignsError);
-      resetCampaignsError();
     }
-  }, [campaignsError, resetCampaignsError]);
+    if (entityTypeError) {
+      console.error(entityTypeError);
+    }
+  }, [campaignsError, entityTypeError]);
 
   return (
     <KankaContext.Provider
       value={{
-        connection: kankaConnection,
         campaigns: useMemo(() => campaigns ?? [], [campaigns]),
-        fetchEntity,
         selectedCampaign,
-        setSelectedCampaign,
-        entityTypes: entities,
+        setSelectedCampaign: (value: number | undefined) => {
+          setSelectedCampaign(value);
+          if (value) localStorage.setItem('selectedCampaign', value.toString());
+          else localStorage.removeItem('selectedCampaign');
+        },
+        entityTypes: useMemo(() => entityTypes ?? [], [entityTypes]),
       }}
     >
       {children}

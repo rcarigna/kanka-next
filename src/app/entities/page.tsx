@@ -1,10 +1,10 @@
 'use client';
-import { PageWrapper, EntitiesPanel } from '../../components';
+import { PageWrapper, EntityTypesPanel } from '../../components';
 
 const Entities: React.FC = () => {
   return (
     <PageWrapper>
-      <EntitiesPanel />
+      <EntityTypesPanel />
     </PageWrapper>
   );
 };

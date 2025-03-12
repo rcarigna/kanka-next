@@ -12,17 +12,32 @@ export const useKankaConnection = (): KankaConnectionType => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [error, setError] = useState<any | null>(null);
   const [apiKey, setApiKey] = useState<string | undefined>(
-    process.env.NEXT_PUBLIC_API_KEY || undefined
+    () =>
+      localStorage.getItem('apiKey') ||
+      process.env.NEXT_PUBLIC_API_KEY ||
+      undefined
   );
   const [baseUrl, setBaseUrl] = useState<string>(
-    process.env.NEXT_PUBLIC_BASE_URL || ''
+    () =>
+      localStorage.getItem('baseUrl') || process.env.NEXT_PUBLIC_BASE_URL || ''
   );
+  useEffect(() => {
+    if (apiKey) localStorage.setItem('apiKey', apiKey);
+    if (baseUrl) localStorage.setItem('baseUrl', baseUrl);
+  }, [apiKey, baseUrl]);
 
   const connection: ConnectionType = useMemo(
     () => ({
       apiKey,
-      setApiKey,
-      clearApiKey: () => setApiKey(undefined),
+      setApiKey: (key: string | undefined) => {
+        setApiKey(key);
+        if (key) localStorage.setItem('apiKey', key);
+        else localStorage.removeItem('apiKey');
+      },
+      clearApiKey: () => {
+        setApiKey(undefined);
+        localStorage.removeItem('apiKey');
+      },
       baseUrl,
       setBaseUrl,
       status,
@@ -33,26 +48,22 @@ export const useKankaConnection = (): KankaConnectionType => {
   // Validate the connection
   useEffect(() => {
     const validate = async () => {
-      if (apiKey && baseUrl) {
-        const result = await validateConnection(apiKey, baseUrl);
-        setStatus(result);
-        if (result === 'valid') {
-          setError(null);
-        }
-        if (result === 'invalid') {
-          setError('Failed to validate connection');
-        }
-      } else {
+      if (!apiKey || !baseUrl) {
         setStatus('apiKeyMissing');
         setError('API key is missing');
+        return;
       }
+
+      const result = await validateConnection(apiKey, baseUrl);
+      setStatus(result);
+      setError(result === 'invalid' ? 'Failed to validate connection' : null);
     };
 
     validate();
   }, [apiKey, baseUrl]);
 
   return {
-    connection: connection,
-    error: error,
+    connection,
+    error,
   };
 };

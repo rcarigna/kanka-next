@@ -1,28 +1,28 @@
 import React from 'react';
+import useSWR from 'swr';
+
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { KankaDataProvider, useKankaContext } from './KankaContext';
-import {
-  useKankaConnection,
-  useCampaigns,
-  useEntities,
-  useFetchEntity,
-} from '../hooks';
+import { useKankaConnection } from '../hooks';
 import userEvent from '@testing-library/user-event';
 
 jest.mock('../hooks');
 jest.mock('../api');
 
+jest.mock('swr');
+
 const mockUseKankaConnection = useKankaConnection as jest.Mock;
-const mockUseCampaigns = useCampaigns as jest.Mock;
-const mockUseEntities = useEntities as jest.Mock;
-const mockUseFetchEntity = useFetchEntity as jest.Mock;
+const mockUseSWR = (useSWR as jest.Mock).mockReturnValue({
+  data: undefined,
+  error: undefined,
+});
+// const mockUseFetchEntity = useFetchEntity as jest.Mock;
 
 const TestComponent = () => {
   const context = useKankaContext();
   return (
     <div>
-      <div data-testid='status'>{context.connection.connection.status}</div>
       <div data-testid='campaigns'>{JSON.stringify(context.campaigns)}</div>
       <div data-testid='entityTypes'>{JSON.stringify(context.entityTypes)}</div>
       <div data-testid='entityLinks'>
@@ -41,6 +41,8 @@ const TestComponent = () => {
 };
 
 describe('KankaContext', () => {
+  const mockCampaigns = [{ id: 1, name: 'Campaign 1' }];
+  const mockEntityTypes = [{ id: 1, code: 'character' }];
   beforeEach(() => {
     mockUseKankaConnection.mockReturnValue({
       connection: {
@@ -49,9 +51,15 @@ describe('KankaContext', () => {
         baseUrl: 'test-base-url',
       },
     });
-    mockUseCampaigns.mockReturnValue({ campaigns: [] });
-    mockUseEntities.mockReturnValue({ entities: [] });
-    mockUseFetchEntity.mockReturnValue({ fetchEntity: jest.fn() });
+    mockUseSWR.mockImplementation((key) => {
+      if (key === 'campaigns') {
+        return { data: mockCampaigns, error: undefined };
+      } else if (Array.isArray(key) && key[0] === 'entityTypes') {
+        return { data: mockEntityTypes, error: undefined };
+      }
+      return { data: undefined, error: undefined };
+    });
+    // mockUseFetchEntity.mockReturnValue({ fetchEntity: jest.fn() });
   });
 
   it('throws an error when not used within a DataProvider', () => {
@@ -68,16 +76,14 @@ describe('KankaContext', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId('status')).toHaveTextContent('valid');
-      expect(screen.getByTestId('campaigns')).toHaveTextContent('[]');
+      expect(screen.getByTestId('campaigns')).toHaveTextContent(
+        JSON.stringify(mockCampaigns)
+      );
       expect(screen.getByTestId('entityTypes')).toHaveTextContent('[]');
     });
   });
 
   it('fetches campaigns on load', async () => {
-    const campaigns = [{ id: 1, name: 'Campaign 1' }];
-    mockUseCampaigns.mockImplementation(() => ({ campaigns }));
-
     render(
       <KankaDataProvider>
         <TestComponent />
@@ -86,15 +92,12 @@ describe('KankaContext', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('campaigns')).toHaveTextContent(
-        JSON.stringify(campaigns)
+        JSON.stringify(mockCampaigns)
       );
     });
   });
 
   it('fetches entity types when selectedCampaign changes', async () => {
-    const entities = [{ id: 1, path: '/entity/1' }];
-    mockUseEntities.mockReturnValue({ entities });
-
     render(
       <KankaDataProvider>
         <TestComponent />
@@ -105,7 +108,7 @@ describe('KankaContext', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('entityTypes')).toHaveTextContent(
-        JSON.stringify(entities)
+        JSON.stringify(mockEntityTypes)
       );
     });
   });

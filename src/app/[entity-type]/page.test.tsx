@@ -1,11 +1,17 @@
 import React from 'react';
 import { useParams } from 'next/navigation';
+import useSwr from 'swr';
 import { KankaContext } from '@/contexts';
 import { mockContext } from '@/__mocks__/constants';
 import { render, screen, waitFor } from '@testing-library/react';
 import Entities from './page';
 import * as api from '../../api';
 
+jest.mock('swr');
+const mockUseSWR = (useSwr as jest.Mock).mockReturnValue({
+  data: undefined,
+  error: undefined,
+});
 jest.mock('../../components', () => ({
   PageWrapper: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
@@ -25,9 +31,21 @@ describe('Entities Page', () => {
   beforeEach(() => {
     (useParams as jest.Mock).mockReturnValue({ 'entity-type': 'character' });
     jest.spyOn(api, 'fetchEntityMap').mockReturnValue([
-      { id: 1, code: 'character' },
-      { id: 2, code: 'location' },
-      { id: 3, code: 'item' },
+      {
+        id: 1,
+        code: 'character',
+        path: '',
+      },
+      {
+        id: 2,
+        code: 'location',
+        path: '',
+      },
+      {
+        id: 3,
+        code: 'item',
+        path: '',
+      },
     ]);
     jest
       .spyOn(api, 'fetchEntitiesForType')
@@ -38,13 +56,13 @@ describe('Entities Page', () => {
     (useParams as jest.Mock).mockReturnValue({ 'entity-type': 'character' });
 
     render(
-      <KankaContext.Provider value={mockContext}>
+      <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
         <Entities />
       </KankaContext.Provider>
     );
 
-    expect(mockContext.fetchEntity).toHaveBeenCalledWith(
-      'character',
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      ['entities', 1, 'character'],
       expect.any(Function)
     );
   });

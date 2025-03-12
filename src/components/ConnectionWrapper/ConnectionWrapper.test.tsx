@@ -2,19 +2,17 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ConnectionWrapper } from './ConnectionWrapper';
-import { useKankaContext } from '../../contexts';
+import { useKankaConnection } from '@/hooks';
 
-jest.mock('../../contexts', () => ({
-  useKankaContext: jest.fn(),
+jest.mock('@/hooks', () => ({
+  useKankaConnection: jest.fn(),
 }));
 
 describe('ConnectionWrapper', () => {
   it('renders loading state', () => {
-    (useKankaContext as jest.Mock).mockReturnValue({
-      connection: {
-        connection: { status: 'loading' },
-        error: null,
-      },
+    (useKankaConnection as jest.Mock).mockReturnValue({
+      connection: { status: 'loading' },
+      error: null,
     });
 
     render(
@@ -28,11 +26,9 @@ describe('ConnectionWrapper', () => {
   });
 
   it('renders invalid state', () => {
-    (useKankaContext as jest.Mock).mockReturnValue({
-      connection: {
-        connection: { status: 'invalid', clearApiKey: jest.fn() },
-        error: 'Invalid API Key',
-      },
+    (useKankaConnection as jest.Mock).mockReturnValue({
+      connection: { status: 'invalid', clearApiKey: jest.fn() },
+      error: 'Invalid API Key',
     });
 
     render(
@@ -48,11 +44,9 @@ describe('ConnectionWrapper', () => {
   });
 
   it('renders apiKeyMissing state', () => {
-    (useKankaContext as jest.Mock).mockReturnValue({
-      connection: {
-        connection: { status: 'apiKeyMissing' },
-        error: null,
-      },
+    (useKankaConnection as jest.Mock).mockReturnValue({
+      connection: { status: 'apiKeyMissing' },
+      error: null,
     });
 
     render(
@@ -65,11 +59,9 @@ describe('ConnectionWrapper', () => {
   });
 
   it('renders valid state', () => {
-    (useKankaContext as jest.Mock).mockReturnValue({
-      connection: {
-        connection: { status: 'valid' },
-        error: null,
-      },
+    (useKankaConnection as jest.Mock).mockReturnValue({
+      connection: { status: 'valid' },
+      error: null,
     });
 
     render(

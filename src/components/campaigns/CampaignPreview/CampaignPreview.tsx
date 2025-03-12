@@ -3,18 +3,15 @@ import { OpenInNew } from '@mui/icons-material';
 import { CampaignType } from '../../../types';
 import { StyledPanel } from '../styles';
 import { useKankaContext } from '../../../contexts';
+import { useKankaConnection } from '@/hooks';
 
 export const CampaignPreview = ({
   campaign,
 }: {
   campaign: CampaignType;
 }): JSX.Element => {
-  const {
-    connection: {
-      connection: { baseUrl },
-    },
-    setSelectedCampaign,
-  } = useKankaContext();
+  const { setSelectedCampaign } = useKankaContext();
+  const { baseUrl } = useKankaConnection().connection;
 
   const campaignUrl = `${baseUrl}/w/${campaign.id}`;
   return (

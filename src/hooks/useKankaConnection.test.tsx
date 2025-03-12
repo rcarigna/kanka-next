@@ -113,6 +113,7 @@ describe('useKankaConnection', () => {
   });
 
   it('should set key and url if they are in constants', async () => {
+    localStorage.clear();
     // Mock environment variables
     process.env.NEXT_PUBLIC_API_KEY = 'mock-api-key';
     process.env.NEXT_PUBLIC_BASE_URL = 'mock-base-url';

@@ -25,9 +25,10 @@ export type KankaItem = {
 };
 
 export type KankaContextType = {
-    connection: KankaConnectionType;
+    // fetchEntity(fetchEntity: any): unknown;
+    // connection: KankaConnectionType;
     campaigns: CampaignType[];
-    fetchEntity: (entityType: string, save: (data: any[]) => void) => void;
+    // fetchEntity: (entityType: string, save: (data: any[]) => void) => void;
     selectedCampaign?: number;
     setSelectedCampaign: (value: number | undefined) => void;
     entityTypes: EntityType[];

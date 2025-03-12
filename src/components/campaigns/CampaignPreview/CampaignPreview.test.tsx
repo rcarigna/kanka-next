@@ -4,29 +4,36 @@ import { CampaignPreview } from './CampaignPreview';
 import { KankaContext } from '../../../contexts';
 import { KankaContextType } from '../../../types';
 import userEvent from '@testing-library/user-event';
+import { useKankaConnection } from '@/hooks';
+
+jest.mock('@/hooks', () => ({
+  useKankaConnection: jest.fn(),
+}));
 
 describe('CampaignPreview', () => {
   const mockFn = jest.fn();
+  const kankaConnectionMock = {
+    connection: {
+      apiKey: undefined,
+      setApiKey: mockFn,
+      clearApiKey: () => {
+        kankaConnectionMock.connection.apiKey = undefined;
+        kankaConnectionMock.connection.status = 'apiKeyMissing';
+      },
+      baseUrl: 'someUrl',
+      setBaseUrl: mockFn,
+      status: 'loading',
+    },
+    error: '',
+  };
   const props: KankaContextType = {
     campaigns: [],
     fetchEntity: jest.fn(),
     setSelectedCampaign: jest.fn(),
-    connection: {
-      connection: {
-        apiKey: undefined,
-        setApiKey: mockFn,
-        clearApiKey: () => {
-          props.connection.connection.apiKey = undefined;
-          props.connection.connection.status = 'apiKeyMissing';
-        },
-        baseUrl: 'someUrl',
-        setBaseUrl: mockFn,
-        status: 'loading',
-      },
-      error: '',
-    },
+    entityTypes: [],
   };
   it('renders a summary', async () => {
+    (useKankaConnection as jest.Mock).mockReturnValue(kankaConnectionMock);
     render(
       <KankaContext.Provider value={props}>
         <CampaignPreview campaign={campaigns[0]} />
@@ -39,6 +46,7 @@ describe('CampaignPreview', () => {
     );
   });
   it('selects a campaign on click', async () => {
+    (useKankaConnection as jest.Mock).mockReturnValue(kankaConnectionMock);
     render(
       <KankaContext.Provider value={props}>
         <CampaignPreview campaign={campaigns[0]} />
