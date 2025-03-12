@@ -70,7 +70,7 @@ describe('kankaApi', () => {
 
             const result = await fetchEntitiesForType({ entityType, selectedCampaign });
             expect(result).toEqual(mockData);
-            expect(fetch).toHaveBeenCalledWith(`${baseUrl}/campaigns/${selectedCampaign}/${entityType}`, {
+            expect(fetch).toHaveBeenCalledWith(`${baseUrl}/campaigns/${selectedCampaign}/${entityType}s`, {
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,
                     'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ describe('kankaApi', () => {
 
         it('should generate the correct path for other entity types', () => {
             const path = getEntityPath({ entityType: 'character', selectedCampaign: 123 });
-            expect(path).toBe('https://api.kanka.io/campaigns/123/character');
+            expect(path).toBe('https://api.kanka.io/campaigns/123/characters');
         });
 
         it('should throw an error for invalid entity types', () => {
@@ -119,7 +119,7 @@ describe('kankaApi', () => {
 
             const result = await getEntityByID(entityType, 123, id);
             expect(result).toEqual(mockData);
-            expect(fetch).toHaveBeenCalledWith(`${baseUrl}/campaigns/123/${entityType}/${id}`, {
+            expect(fetch).toHaveBeenCalledWith(`${baseUrl}/campaigns/123/${entityType}s/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,
                     'Content-Type': 'application/json',

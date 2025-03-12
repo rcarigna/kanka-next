@@ -5,6 +5,7 @@ import React, {
   useState,
   useMemo,
   useEffect,
+  useCallback,
 } from 'react';
 import useSWR from 'swr';
 import { KankaContextType } from '../types';
@@ -26,6 +27,13 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     }
   );
 
+  // Save campaign selection
+  useEffect(() => {
+    if (selectedCampaign !== undefined) {
+      localStorage.setItem('selectedCampaign', selectedCampaign.toString());
+    }
+  }, [selectedCampaign]);
+
   const { data: campaigns, error: campaignsError } = useSWR(
     status === 'valid' ? 'campaigns' : null,
     getCampaigns
@@ -45,16 +53,21 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [campaignsError, entityTypeError]);
 
+  const updateSelectedCampaign = useCallback(
+    (value: number | undefined) => {
+      setSelectedCampaign(value);
+      if (value === undefined) {
+        localStorage.removeItem('selectedCampaign');
+      }
+    },
+    [setSelectedCampaign]
+  );
   return (
     <KankaContext.Provider
       value={{
         campaigns: useMemo(() => campaigns ?? [], [campaigns]),
         selectedCampaign,
-        setSelectedCampaign: (value: number | undefined) => {
-          setSelectedCampaign(value);
-          if (value) localStorage.setItem('selectedCampaign', value.toString());
-          else localStorage.removeItem('selectedCampaign');
-        },
+        setSelectedCampaign: updateSelectedCampaign,
         entityTypes: useMemo(() => entityTypes ?? [], [entityTypes]),
       }}
     >

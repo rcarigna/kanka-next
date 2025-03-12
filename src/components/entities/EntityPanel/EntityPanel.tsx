@@ -14,19 +14,14 @@ import { fetchEntitiesForType } from '@/api';
 
 export const EntityPanel = ({ entityType }: { entityType: string }) => {
   const { entityTypes, selectedCampaign } = useKankaContext();
-  console.log(`entityType: ${entityType}`);
-  console.log(`selectedCampaign: ${selectedCampaign}`);
   const {
     data: entities,
     isLoading: loading,
     error,
   } = useSWR(
-    selectedCampaign ? ['entities', selectedCampaign, entityType] : null,
+    selectedCampaign ? { entityType, selectedCampaign } : null,
     fetchEntitiesForType
   );
-  console.log(`entities: ${entities?.length}`);
-  console.log(`loading: ${loading}`);
-  console.log(`error: ${error}`);
 
   if (
     !entityType ||
@@ -43,7 +38,6 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
     );
   }
   if (loading) {
-    console.log('loading');
     return (
       <Box>
         <CircularProgress role='progressbar' />

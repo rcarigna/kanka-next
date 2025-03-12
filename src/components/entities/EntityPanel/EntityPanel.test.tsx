@@ -12,7 +12,6 @@ const mockUseSWR = (useSWR as jest.Mock).mockReturnValue({
   error: undefined,
 });
 const mockCampaigns = [{ id: 1, name: 'Campaign 1' }];
-const mockEntityTypes = [{ id: 1, code: 'character' }];
 
 describe('EntityPanel', () => {
   const characterMocks: CharacterEntity[] = [
@@ -32,11 +31,12 @@ describe('EntityPanel', () => {
   beforeEach(() => {
     mockUseSWR.mockImplementation((key) => {
       console.log(`in mockUseSWR: ${key}`);
+      if (!key) {
+        return { data: undefined, error: undefined };
+      }
       if (key === 'campaigns') {
         return { data: mockCampaigns, error: undefined };
-      } else if (Array.isArray(key) && key[0] === 'entityTypes') {
-        return { data: mockEntityTypes, error: undefined };
-      } else if (Array.isArray(key) && key[2] === 'character') {
+      } else if (Object.values(key).includes('character')) {
         return { data: characterMocks, error: undefined };
       }
       return { data: undefined, error: undefined };

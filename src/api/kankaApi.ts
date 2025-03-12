@@ -56,6 +56,9 @@ export const fetchEntityMap = () => entityMap.map((entity) => ({ ...entity, path
  * @returns The API path for fetching entities.
  */
 export const getEntityPath = ({ entityType, selectedCampaign }: GenerateEntityPathParams): string => {
+    console.log(`entityType: ${entityType}`);
+    console.log(`selectedCampaign: ${selectedCampaign}`);
+    // console.log('entityMap', entityMap);
     const entity = entityMap.find((entity) => entity.code === entityType);
     if (!entity) {
         throw new Error(`Invalid entity type: ${entityType}`);
@@ -65,7 +68,7 @@ export const getEntityPath = ({ entityType, selectedCampaign }: GenerateEntityPa
     if (entityType === 'campaigns' || entityType === 'entities') {
         return `${baseUrl}/${entityType}`;
     }
-    return `${baseUrl}/campaigns/${selectedCampaign}/${entity.code}`;
+    return `${baseUrl}/campaigns/${selectedCampaign}/${entity.code}s`;
 };
 /**
  * Fetches all instances of an entity type for the selected campaign with an existing API connection.

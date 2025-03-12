@@ -62,7 +62,7 @@ describe('Entities Page', () => {
     );
 
     expect(mockUseSWR).toHaveBeenCalledWith(
-      ['entities', 1, 'character'],
+      { entityType: 'character', selectedCampaign: 1 },
       expect.any(Function)
     );
   });
