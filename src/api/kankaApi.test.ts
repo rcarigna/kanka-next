@@ -54,7 +54,7 @@ describe('kankaApi', () => {
 
     describe('fetchEntityMap', () => {
         it('should return the entity map', () => {
-            expect(fetchEntityMap()).toEqual(entityMap.map((entity) => ({ ...entity, path: `./${entity.code}` })));
+            expect(fetchEntityMap()).toEqual(entityMap);
         });
     });
 
@@ -141,7 +141,7 @@ describe('kankaApi', () => {
     describe('getEntityTypes', () => {
         it('should fetch and return entity types when the request is successful', async () => {
             const result = await getEntityTypes();
-            expect(result).toEqual(entityMap.map((entity) => ({ ...entity, path: `./${entity.code}` })));
+            expect(result).toEqual(entityMap);
 
         });
     });

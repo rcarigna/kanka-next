@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Box, Typography, CircularProgress } from '@mui/material';
-import { fetchEntityMap, getEntityByID } from '../../../api';
+import { getEntityByID } from '../../../api';
 import { useKankaContext } from '@/contexts';
 
 export const EntityInstance = ({
@@ -10,9 +10,9 @@ export const EntityInstance = ({
   entityType: string;
   id: number;
 }) => {
-  const { selectedCampaign } = useKankaContext();
+  const { selectedCampaign, entityTypes: entityMap } = useKankaContext();
 
-  const entityMap = fetchEntityMap();
+  // const entityMap = fetchEntityMap();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);

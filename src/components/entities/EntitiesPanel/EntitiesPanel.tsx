@@ -14,9 +14,7 @@ export const EntityTypesPanel = () => {
       ) : (
         <List>
           {entityMap.map((entity) => (
-            <ListItem key={entity.id}>
-              <a href={`/${entity.code}`}>{entity.code}</a>
-            </ListItem>
+            <ListItem key={entity.id}>{entity.code}</ListItem>
           ))}
         </List>
       )}

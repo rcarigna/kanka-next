@@ -22,7 +22,7 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
 
   const [selectedCampaign, setSelectedCampaign] = useState<number | undefined>(
     () => {
-      const savedCampaign = localStorage.getItem('selectedCampaign');
+      const savedCampaign = localStorage?.getItem('selectedCampaign');
       return savedCampaign ? Number(savedCampaign) : undefined;
     }
   );

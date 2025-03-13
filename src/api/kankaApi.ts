@@ -47,7 +47,7 @@ export const validateConnection = async (
  * Fetches the entity map - aka: the Kanka REST API endpoints.
  * @returns The entity map.
  */
-export const fetchEntityMap = () => entityMap.map((entity) => ({ ...entity, path: `./${entity.code}` }));
+export const fetchEntityMap = () => entityMap;
 
 
 /**
