@@ -64,19 +64,32 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     },
     [navigateTo]
   );
+
+  const value = useMemo(
+    () => ({
+      campaigns: campaigns || [],
+      selectedCampaign,
+      setSelectedCampaign: updateSelectedCampaign,
+      entityTypes: entityTypes || [],
+      selectedEntityType: entityType,
+      selectedEntityId: entityId,
+    }),
+    [
+      campaigns,
+      selectedCampaign,
+      updateSelectedCampaign,
+      entityTypes,
+      entityType,
+      entityId,
+    ]
+  );
+  console.log(
+    `kanka context selectedCampaign: ${selectedCampaign}. selectedEntityType: ${entityType}. selectedEntityId: ${
+      entityId
+    }`
+  );
   return (
-    <KankaContext.Provider
-      value={{
-        campaigns: useMemo(() => campaigns ?? [], [campaigns]),
-        selectedCampaign,
-        setSelectedCampaign: updateSelectedCampaign,
-        entityTypes: useMemo(() => entityTypes ?? [], [entityTypes]),
-        selectedEntityType: entityType,
-        selectedEntityId: entityId,
-      }}
-    >
-      {children}
-    </KankaContext.Provider>
+    <KankaContext.Provider value={value}>{children}</KankaContext.Provider>
   );
 };
 

@@ -1,5 +1,6 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import useSWR from 'swr';
 import { Card, Box, Typography, CircularProgress } from '@mui/material';
 import { getEntityByID } from '../../../api';
 import { useKankaContext } from '@/contexts';
@@ -13,40 +14,17 @@ export const EntityInstance = ({
 }) => {
   const { selectedCampaign, entityTypes: entityMap } = useKankaContext();
 
-  // const entityMap = fetchEntityMap();
-
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [entity, setEntity] = useState<any | undefined>(undefined);
-
-  useEffect(() => {
-    if (!entityType || !id || !selectedCampaign) {
-      setLoading(false);
-      return;
-    }
-
-    if (!entityMap.some((entity) => entity.code === entityType)) {
-      setLoading(false);
-      return;
-    }
-
-    if (entity === undefined) {
-      setLoading(true);
-      getEntityByID(entityType, id, selectedCampaign)
-        .then((data) => {
-          setEntity(data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          setError(err);
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
-  }, [entityType, id, selectedCampaign, entity, entityMap]);
-
+  const {
+    data: entity,
+    error,
+    isLoading: loading,
+  } = useSWR(
+    selectedCampaign && entityType && id
+      ? { entityType, selectedCampaign, id }
+      : null,
+    ({ entityType, selectedCampaign, id }) =>
+      getEntityByID(entityType, selectedCampaign, id)
+  );
   if (!loading && !selectedCampaign) {
     return (
       <Typography

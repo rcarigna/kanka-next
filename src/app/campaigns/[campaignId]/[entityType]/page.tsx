@@ -6,7 +6,7 @@ import { useKankaContext } from '@/contexts';
 
 const EntityContent: React.FC = () => {
   const { selectedEntityType: entityType } = useKankaContext();
-  console.log('entityType', entityType);
+  console.log('entityType in entityType page', entityType);
 
   return entityType ? (
     <EntityPanel

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import EntityInstance from './[id]';
+import EntityInstance from './page';
 import { useKankaConnection } from '@/hooks';
 import { mockContext } from '@/__mocks__/constants';
 import { KankaContext } from '@/contexts';

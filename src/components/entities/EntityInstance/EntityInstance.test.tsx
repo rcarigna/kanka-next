@@ -4,7 +4,13 @@ import { EntityInstance } from './EntityInstance';
 import { CharacterEntity } from '../EntityPanel/types';
 import { KankaContext } from '@/contexts';
 import { mockContext } from '@/__mocks__/constants';
+import useSWR from 'swr';
 
+jest.mock('swr');
+const mockUseSWR = (useSWR as jest.Mock).mockReturnValue({
+  data: undefined,
+  error: undefined,
+});
 jest.mock('../../../api');
 
 describe('EntityInstance', () => {
@@ -44,6 +50,10 @@ describe('EntityInstance', () => {
   });
 
   it('should render the entity details', async () => {
+    (mockUseSWR as jest.Mock).mockReturnValueOnce({
+      data: character,
+      error: undefined,
+    });
     render(
       <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
         <EntityInstance entityType='character' id={character.id} />
@@ -55,9 +65,10 @@ describe('EntityInstance', () => {
   });
 
   it('should handle invalid or non-existent entity IDs', async () => {
-    (api.getEntityByID as jest.Mock).mockRejectedValueOnce(
-      new Error('Not found')
-    );
+    (mockUseSWR as jest.Mock).mockReturnValueOnce({
+      data: undefined,
+      error: new Error('Not found'),
+    });
     render(
       <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
         <EntityInstance entityType='character' id={character.id} />

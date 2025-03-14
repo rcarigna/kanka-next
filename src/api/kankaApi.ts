@@ -127,6 +127,5 @@ export const getEntityByID = async (entityType: string, campaign: number, id: nu
         console.log(`Failed to fetch entity with id ${id} of type ${entityType}`)
         throw new Error(`Failed to fetch entity with id ${id} of type ${entityType}`);
     }
-    console.log('response.json()', response.json());
     return response.json().then((data) => data.data);
 };
