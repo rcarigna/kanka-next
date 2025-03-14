@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'next/navigation';
 import useSwr from 'swr';
 import { KankaContext } from '@/contexts';
 import { mockContext } from '@/__mocks__/constants';
@@ -9,8 +8,8 @@ import * as api from '../../../../api';
 
 jest.mock('swr');
 const mockUseSWR = (useSwr as jest.Mock).mockReturnValue({
-  data: undefined,
-  error: undefined,
+  data: [{ id: 1, name: 'Character 1', entity_id: 1 }],
+  error: null,
 });
 jest.mock('../../../../components', () => ({
   PageWrapper: ({ children }: { children: React.ReactNode }) => (
@@ -25,11 +24,14 @@ jest.mock('../../../../api', () => ({
 
 jest.mock('next/navigation', () => ({
   useParams: jest.fn(),
+  usePathname: jest.fn(),
+}));
+jest.mock('next/router', () => ({
+  useRouter: jest.fn().mockReturnValue({ push: jest.fn() }),
 }));
 
 describe('Entities Page', () => {
   beforeEach(() => {
-    (useParams as jest.Mock).mockReturnValue({ 'entity-type': 'character' });
     jest.spyOn(api, 'fetchEntityMap').mockReturnValue([
       {
         id: 1,
@@ -53,10 +55,14 @@ describe('Entities Page', () => {
   });
 
   it('renders PageWrapper and EntitiesPanel', async () => {
-    (useParams as jest.Mock).mockReturnValue({ 'entity-type': 'character' });
-
     render(
-      <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
+      <KankaContext.Provider
+        value={{
+          ...mockContext,
+          selectedCampaign: 1,
+          selectedEntityType: 'character',
+        }}
+      >
         <Entities />
       </KankaContext.Provider>
     );
@@ -67,8 +73,11 @@ describe('Entities Page', () => {
     );
   });
   it('renders loading when entityType is not defined', async () => {
-    (useParams as jest.Mock).mockReturnValue({ 'entity-type': undefined });
-    render(<Entities />);
+    render(
+      <KankaContext.Provider value={{ ...mockContext, selectedCampaign: 1 }}>
+        <Entities />
+      </KankaContext.Provider>
+    );
     await waitFor(() =>
       expect(screen.getByText('No entity-type found')).toBeInTheDocument()
     );

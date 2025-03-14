@@ -1,5 +1,5 @@
 'use client';
-import { useRouter } from 'next/router';
+import { useKankaContext } from '@/contexts';
 import {
   PageWrapper,
   EntityInstance as EntityInstancePanel,
@@ -7,8 +7,8 @@ import {
 import { Box } from '@mui/material';
 
 const EntityInstance: React.FC = () => {
-  const router = useRouter();
-  const { entityType, id } = router.query;
+  const { selectedEntityId: id, selectedEntityType: entityType } =
+    useKankaContext();
 
   return (
     <PageWrapper>

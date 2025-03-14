@@ -1,3 +1,6 @@
+'use client';
+// import { useRouter } from 'next/navigation';
+
 import { Typography, Link, Button } from '@mui/material';
 import { OpenInNew } from '@mui/icons-material';
 import { CampaignType } from '../../../types';
@@ -12,6 +15,7 @@ export const CampaignPreview = ({
 }): JSX.Element => {
   const { setSelectedCampaign } = useKankaContext();
   const { baseUrl } = useKankaConnection().connection;
+  // const router = useRouter();
 
   const campaignUrl = `${baseUrl}/w/${campaign.id}`;
   return (

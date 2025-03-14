@@ -32,6 +32,8 @@ export type KankaContextType = {
     selectedCampaign?: number;
     setSelectedCampaign: (value: number | undefined) => void;
     entityTypes: EntityType[];
+    selectedEntityType: string | string[] | null;
+    selectedEntityId: string | string[] | null;
     // fetchEntitiesForType: (entityType: string, save: (data: any[]) => void) => void;
     // fetchEntityById: ({ entityType, id }: { entityType: string; id: number }) => void;
 };

@@ -1,5 +1,5 @@
 'use client';
-import { Typography, Button, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { useKankaContext } from '../../../contexts';
 import { useMemo } from 'react';
 import { CampaignType } from '../../../types';
@@ -7,8 +7,7 @@ import { CampaignType } from '../../../types';
 export const NO_ENTRY_TEXT = 'No introduction available.';
 
 export const CampaignSelected = () => {
-  const { campaigns, selectedCampaign, setSelectedCampaign } =
-    useKankaContext();
+  const { campaigns, selectedCampaign } = useKankaContext();
 
   const selectedCampaignData: CampaignType | undefined = useMemo(() => {
     if (!campaigns || !selectedCampaign) {
@@ -30,12 +29,6 @@ export const CampaignSelected = () => {
 
   return (
     <Box>
-      <Button
-        onClick={() => setSelectedCampaign(undefined)}
-        style={{ marginBottom: '1rem' }}
-      >
-        Back to Campaigns
-      </Button>
       {selectedCampaignData ? (
         <Box>
           {selectedCampaignData?.entry !== NO_ENTRY_TEXT && (

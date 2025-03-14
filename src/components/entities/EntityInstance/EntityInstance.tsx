@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Card, Box, Typography, CircularProgress } from '@mui/material';
 import { getEntityByID } from '../../../api';

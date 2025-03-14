@@ -1,3 +1,4 @@
+'use client';
 import React, {
   createContext,
   useContext,
@@ -11,6 +12,7 @@ import useSWR from 'swr';
 import { KankaContextType } from '../types';
 import { useKankaConnection } from '../hooks';
 import { getCampaigns, getEntityTypes } from '../api/kankaApi';
+import { useRouterContext } from './RouterContext';
 
 export const KankaContext = createContext<KankaContextType | undefined>(
   undefined
@@ -19,20 +21,10 @@ export const KankaContext = createContext<KankaContextType | undefined>(
 export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const { connection } = useKankaConnection();
   const { status } = connection;
-
+  const { campaignId, navigateTo, entityType, entityId } = useRouterContext();
   const [selectedCampaign, setSelectedCampaign] = useState<number | undefined>(
-    () => {
-      const savedCampaign = localStorage?.getItem('selectedCampaign');
-      return savedCampaign ? Number(savedCampaign) : undefined;
-    }
+    campaignId ? Number(campaignId) : undefined
   );
-
-  // Save campaign selection
-  useEffect(() => {
-    if (selectedCampaign !== undefined) {
-      localStorage.setItem('selectedCampaign', selectedCampaign.toString());
-    }
-  }, [selectedCampaign]);
 
   const { data: campaigns, error: campaignsError } = useSWR(
     status === 'valid' ? 'campaigns' : null,
@@ -43,6 +35,18 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     selectedCampaign ? ['entityTypes', selectedCampaign] : null,
     getEntityTypes
   );
+
+  useEffect(() => {
+    if (entityTypes && selectedCampaign) {
+      entityTypes.forEach((entityType) => {
+        if (['campaigns', 'entities'].includes(entityType.code)) {
+          entityType.sitePath = `/${entityType.code}`;
+        } else {
+          entityType.sitePath = `/campaigns/${selectedCampaign}/${entityType.code}`;
+        }
+      });
+    }
+  }, [entityTypes, selectedCampaign]);
 
   useEffect(() => {
     if (campaignsError) {
@@ -56,11 +60,9 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const updateSelectedCampaign = useCallback(
     (value: number | undefined) => {
       setSelectedCampaign(value);
-      if (value === undefined) {
-        localStorage.removeItem('selectedCampaign');
-      }
+      navigateTo(value ? `/campaigns/${value}` : '/');
     },
-    [setSelectedCampaign]
+    [navigateTo]
   );
   return (
     <KankaContext.Provider
@@ -69,6 +71,8 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
         selectedCampaign,
         setSelectedCampaign: updateSelectedCampaign,
         entityTypes: useMemo(() => entityTypes ?? [], [entityTypes]),
+        selectedEntityType: entityType,
+        selectedEntityId: entityId,
       }}
     >
       {children}

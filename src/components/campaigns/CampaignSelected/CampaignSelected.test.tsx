@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { CampaignSelected, NO_ENTRY_TEXT } from './CampaignSelected';
 import { KankaContext } from '../../../contexts';
@@ -54,21 +54,6 @@ describe('CampaignSelected', () => {
     expect(screen.getByText(NO_ENTRY_TEXT)).toBeInTheDocument();
   });
 
-  it('calls setSelectedCampaign with undefined when "Back to Campaigns" button is clicked', () => {
-    render(
-      <KankaContext.Provider
-        value={{
-          ...mockContext,
-          selectedCampaign: 206764,
-        }}
-      >
-        <CampaignSelected />
-      </KankaContext.Provider>
-    );
-    fireEvent.click(screen.getByText('Back to Campaigns'));
-    expect(mockContext.setSelectedCampaign).toHaveBeenCalledWith(undefined);
-  });
-
   it('does not render campaign details when no campaign is selected', () => {
     renderComponent(undefined);
     expect(screen.queryByText('Campaign 1')).not.toBeInTheDocument();
@@ -86,7 +71,6 @@ describe('CampaignSelected', () => {
         <CampaignSelected />
       </KankaContext.Provider>
     );
-    expect(screen.getByText('Back to Campaigns')).toBeInTheDocument();
     expect(
       screen.getByText('Problem with campaign selected')
     ).toBeInTheDocument();

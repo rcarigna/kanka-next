@@ -1,4 +1,4 @@
-export type EntityType = { id: number; code: string; path?: string; };
+export type EntityType = { id: number; code: string; path?: string; sitePath?: string; };
 
 export const entityMap: EntityType[] = [
     {

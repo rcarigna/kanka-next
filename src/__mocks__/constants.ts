@@ -109,4 +109,5 @@ export const mockContext: KankaContextType = {
         "id": 11,
         "code": "journal"
     }],
+    selectedEntityType: null
 };

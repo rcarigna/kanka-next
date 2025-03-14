@@ -65,7 +65,7 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
         <List>
           {entities?.map((entity: any) => (
             <ListItem key={entity.id}>
-              <a href={`/${entityType}/${entity.id}`}>{entity.name}</a>
+              <a href={`./${entityType}/${entity.id}`}>{entity.name}</a>
             </ListItem>
           ))}
         </List>

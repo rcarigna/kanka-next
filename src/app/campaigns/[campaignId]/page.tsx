@@ -1,5 +1,10 @@
-import { CampaignSelected } from '@/components';
+import { PageWrapper, CampaignSelected } from '@/components';
 
-export const CampaignPage = () => {
-  return <CampaignSelected />;
+const CampaignPage = () => {
+  return (
+    <PageWrapper>
+      <CampaignSelected />
+    </PageWrapper>
+  );
 };
+export default CampaignPage;

@@ -4,9 +4,15 @@ import useSWR from 'swr';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { KankaDataProvider, useKankaContext } from './KankaContext';
+import { RouterProvider } from './RouterContext';
 import { useKankaConnection } from '../hooks';
 import userEvent from '@testing-library/user-event';
 
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn().mockReturnValue({ push: jest.fn() }),
+  usePathname: jest.fn(),
+  useParams: jest.fn(),
+}));
 jest.mock('../hooks');
 jest.mock('../api');
 
@@ -42,7 +48,9 @@ const TestComponent = () => {
 
 describe('KankaContext', () => {
   const mockCampaigns = [{ id: 1, name: 'Campaign 1' }];
-  const mockEntityTypes = [{ id: 1, code: 'character' }];
+  const mockEntityTypes = [
+    { id: 1, code: 'character', sitePath: '/campaigns/1/character' },
+  ];
   beforeEach(() => {
     mockUseKankaConnection.mockReturnValue({
       connection: {
@@ -70,9 +78,11 @@ describe('KankaContext', () => {
 
   it('provides the correct context values', async () => {
     render(
-      <KankaDataProvider>
-        <TestComponent />
-      </KankaDataProvider>
+      <RouterProvider>
+        <KankaDataProvider>
+          <TestComponent />
+        </KankaDataProvider>
+      </RouterProvider>
     );
 
     await waitFor(() => {
@@ -85,9 +95,11 @@ describe('KankaContext', () => {
 
   it('fetches campaigns on load', async () => {
     render(
-      <KankaDataProvider>
-        <TestComponent />
-      </KankaDataProvider>
+      <RouterProvider>
+        <KankaDataProvider>
+          <TestComponent />
+        </KankaDataProvider>
+      </RouterProvider>
     );
 
     await waitFor(() => {
@@ -99,9 +111,11 @@ describe('KankaContext', () => {
 
   it('fetches entity types when selectedCampaign changes', async () => {
     render(
-      <KankaDataProvider>
-        <TestComponent />
-      </KankaDataProvider>
+      <RouterProvider>
+        <KankaDataProvider>
+          <TestComponent />
+        </KankaDataProvider>
+      </RouterProvider>
     );
 
     await userEvent.click(screen.getByTestId('change-campaign'));

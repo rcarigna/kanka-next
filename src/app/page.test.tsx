@@ -4,11 +4,11 @@ import '@testing-library/jest-dom';
 import Home from './page';
 import { ErrorBoundary } from 'react-error-boundary';
 
-jest.mock('../components', () => ({
+jest.mock('@/components', () => ({
   PageWrapper: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
-  Content: () => <div>Content Component</div>,
+  CampaignSelect: () => <div>Content Component</div>,
 }));
 
 describe('Home Page', () => {

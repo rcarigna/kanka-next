@@ -59,7 +59,7 @@ describe('EntityPanel', () => {
         expect(screen.getByText(character.name)).toBeInTheDocument();
 
         const link = screen.getByRole('link', { name: character.name });
-        expect(link).toHaveAttribute('href', `/character/${character.id}`);
+        expect(link).toHaveAttribute('href', `./character/${character.id}`);
       });
     });
   });

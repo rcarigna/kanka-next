@@ -32,7 +32,7 @@ export const Toolbar = () => {
           <Link
             data-testid={`toolbar-link-entity-${entityType.id}`}
             key={entityType.id}
-            href={entityType.path || '#'}
+            href={entityType.sitePath || '#'}
             passHref
           >
             <Button>{entityType.code}</Button>
