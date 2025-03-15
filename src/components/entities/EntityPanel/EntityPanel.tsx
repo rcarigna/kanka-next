@@ -46,14 +46,12 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
     );
   }
   if (error) {
-    console.log('error');
     return (
       <Typography variant='h6' color='error' data-testid='entity-error-message'>
         {error.message}
       </Typography>
     );
   }
-  console.log(`entities: ${entities?.length}`);
   return (
     <Card
       data-testid='entities-panel'

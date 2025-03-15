@@ -126,12 +126,7 @@ describe('EntityInstance', () => {
   });
 
   it('renders correctly when there is no selected campaign and it is done loading', async () => {
-    // jest.spyOn(api, 'getEntityByID').mockImplementation(() => {
-    //   console.log(`in api.getEntityByID mock`);
-    //   return Promise.resolve(undefined);
-    // });
     (mockFetchData as jest.Mock).mockImplementation(() => {
-      console.log(`in api.getEntityByID mock`);
       return Promise.resolve(undefined);
     });
     render(

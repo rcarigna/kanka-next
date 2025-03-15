@@ -30,7 +30,6 @@ describe('EntityPanel', () => {
   ];
   beforeEach(() => {
     mockUseSWR.mockImplementation((key) => {
-      console.log(`in mockUseSWR: ${key}`);
       if (!key) {
         return { data: undefined, error: undefined };
       }

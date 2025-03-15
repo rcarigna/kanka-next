@@ -51,7 +51,6 @@ export const RouterProvider = ({ children }: { children: ReactNode }) => {
     }),
     [campaignId, entityType, entityId, navigateTo, params, pathname]
   );
-  console.log('RouterProvider value:', value);
   return (
     <RouterContext.Provider value={value}>{children}</RouterContext.Provider>
   );

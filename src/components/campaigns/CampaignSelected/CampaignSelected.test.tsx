@@ -38,7 +38,6 @@ describe('CampaignSelected', () => {
       ...c,
       entry: '',
     }));
-    console.log(`tempCampaigns: ${JSON.stringify(tempCampaigns)}`);
     render(
       <KankaContext.Provider
         value={{

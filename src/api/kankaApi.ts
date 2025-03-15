@@ -25,6 +25,7 @@ export const validateConnection = async (
     baseUrl: string
 ): Promise<ConnectionStatus> => {
     try {
+        console.log(`kankaApi: validating api key. apiKey is defined: ${Boolean(apiKey)}, baseUrl: ${baseUrl}`);
         // @TODO: change to use entitites endpoint
         const response = await fetch(`${baseUrl}/campaigns`, {
             headers: commonHeaders(apiKey),
@@ -56,9 +57,6 @@ export const fetchEntityMap = () => entityMap;
  * @returns The API path for fetching entities.
  */
 export const getEntityPath = ({ entityType, selectedCampaign }: GenerateEntityPathParams): string => {
-    console.log(`entityType: ${entityType}`);
-    console.log(`selectedCampaign: ${selectedCampaign}`);
-    // console.log('entityMap', entityMap);
     const entity = entityMap.find((entity) => entity.code === entityType);
     if (!entity) {
         throw new Error(`Invalid entity type: ${entityType}`);
@@ -93,6 +91,7 @@ export const fetchEntitiesForType = async ({ entityType, selectedCampaign }: Fet
  * @returns 
  */
 export const getCampaigns = async (): Promise<CampaignType[]> => {
+    console.log(`kankaApi: getCampaigns`);
     return fetchEntitiesForType({ entityType: 'campaigns' });
 };
 
@@ -101,6 +100,7 @@ export const getCampaigns = async (): Promise<CampaignType[]> => {
  * @returns 
  */
 export const getEntityTypes = async () => {
+    console.log(`kankaApi: getEntityTypes`);
     return fetchEntityMap();
 };
 
@@ -111,20 +111,13 @@ export const getEntityTypes = async () => {
  * @returns The entity data.
  */
 export const getEntityByID = async (entityType: string, campaign: number, id: number): Promise<any> => {
-    console.log('entityType', entityType);
-    console.log('id', id);
+    console.log(`kankaApi: getEntityByID(${entityType}, ${campaign}, ${id})`);
     const { apiKey } = getApiConfig();
-    console.log('apiKey', apiKey);
     const path = `${getEntityPath({ entityType, selectedCampaign: campaign })}/${id}`;
-    console.log('path', path);
     const response = await fetch(path, {
         headers: commonHeaders(apiKey),
     });
-    console.log('response', response);
     if (!response.ok) {
-        console.log('reponse is NOT okay. throwing error');
-        console.log('response.statusText', response.statusText);
-        console.log(`Failed to fetch entity with id ${id} of type ${entityType}`)
         throw new Error(`Failed to fetch entity with id ${id} of type ${entityType}`);
     }
     return response.json().then((data) => data.data);
