@@ -63,7 +63,7 @@ export type KankaConnectionType = {
 };
 
 
-export type ConnectionStatus = 'loading' | 'valid' | 'invalid' | 'apiKeyMissing';
+export type ConnectionStatus = 'new' | 'loading' | 'valid' | 'invalid' | 'apiKeyMissing';
 
 export type fetchFromEndpointType = {
     status: ConnectionStatus;
