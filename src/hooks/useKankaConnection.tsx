@@ -12,19 +12,31 @@ export const useKankaConnection = (): KankaConnectionType => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [error, setError] = useState<any | null>(null);
-  const [apiKey, setApiKey] = useState<string | undefined>(
-    () =>
-      localStorage.getItem('apiKey') ||
-      process.env.NEXT_PUBLIC_API_KEY ||
-      undefined
-  );
-  const [baseUrl, setBaseUrl] = useState<string>(
-    () =>
-      localStorage.getItem('baseUrl') || process.env.NEXT_PUBLIC_BASE_URL || ''
-  );
+  const [apiKey, setApiKey] = useState<string | undefined>(() => {
+    if (typeof window !== 'undefined') {
+      return (
+        localStorage.getItem('apiKey') ||
+        process.env.NEXT_PUBLIC_API_KEY ||
+        undefined
+      );
+    }
+    return process.env.NEXT_PUBLIC_API_KEY || undefined;
+  });
+  const [baseUrl, setBaseUrl] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return (
+        localStorage.getItem('baseUrl') ||
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        ''
+      );
+    }
+    return process.env.NEXT_PUBLIC_BASE_URL || '';
+  });
   useEffect(() => {
-    if (apiKey) localStorage.setItem('apiKey', apiKey);
-    if (baseUrl) localStorage.setItem('baseUrl', baseUrl);
+    if (typeof window !== 'undefined') {
+      if (apiKey) localStorage.setItem('apiKey', apiKey);
+      if (baseUrl) localStorage.setItem('baseUrl', baseUrl);
+    }
   }, [apiKey, baseUrl]);
 
   const connection: ConnectionType = useMemo(
@@ -32,15 +44,24 @@ export const useKankaConnection = (): KankaConnectionType => {
       apiKey,
       setApiKey: (key: string | undefined) => {
         setApiKey(key);
-        if (key) localStorage.setItem('apiKey', key);
-        else localStorage.removeItem('apiKey');
+        if (typeof window !== 'undefined') {
+          if (key) localStorage.setItem('apiKey', key);
+          else localStorage.removeItem('apiKey');
+        }
       },
       clearApiKey: () => {
         setApiKey(undefined);
-        localStorage.removeItem('apiKey');
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('apiKey');
+        }
       },
       baseUrl,
-      setBaseUrl,
+      setBaseUrl: (url: string) => {
+        setBaseUrl(url);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('baseUrl', url);
+        }
+      },
       status,
     }),
     [apiKey, baseUrl, status]

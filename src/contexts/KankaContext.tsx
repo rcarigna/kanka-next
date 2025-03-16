@@ -11,7 +11,12 @@ import React, {
 import useSWR from 'swr';
 import { KankaContextType } from '../types';
 import { useKankaConnection } from '../hooks';
-import { getCampaigns, getEntityTypes } from '../api/kankaApi';
+import {
+  getCampaigns,
+  getEntityTypes,
+  fetchEntitiesForType,
+  getEntityByID,
+} from '../api/kankaApi';
 import { useRouterContext } from './RouterContext';
 
 export const KankaContext = createContext<KankaContextType | undefined>(
@@ -36,6 +41,30 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     getEntityTypes
   );
 
+  const fetchEntitiesKey = useMemo(
+    () =>
+      selectedCampaign && entityType ? { entityType, selectedCampaign } : null,
+    [selectedCampaign, entityType]
+  );
+
+  const {
+    data: entities,
+    error: entitiesError,
+    isLoading: entitiesLoading,
+  } = useSWR(fetchEntitiesKey, fetchEntitiesForType);
+
+  const fetchEntityKey = useMemo(
+    () =>
+      selectedCampaign && entityType && entityId
+        ? { entityType, selectedCampaign, entityId }
+        : null,
+    [selectedCampaign, entityType, entityId]
+  );
+  const {
+    data: entityData,
+    error: entityError,
+    isLoading: entityLoading,
+  } = useSWR(fetchEntityKey, getEntityByID);
   useEffect(() => {
     if (entityTypes && selectedCampaign) {
       entityTypes.forEach((entityType) => {
@@ -55,7 +84,10 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
     if (entityTypeError) {
       console.error(entityTypeError);
     }
-  }, [campaignsError, entityTypeError]);
+    if (entitiesError) {
+      console.error(entitiesError);
+    }
+  }, [campaignsError, entityTypeError, entitiesError]);
 
   const updateSelectedCampaign = useCallback(
     (value: number | undefined) => {
@@ -68,26 +100,38 @@ export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
   const value = useMemo(
     () => ({
       campaigns: campaigns || [],
+      campaignsError,
       selectedCampaign,
       setSelectedCampaign: updateSelectedCampaign,
       entityTypes: entityTypes || [],
+      entityTypeError,
       selectedEntityType: entityType,
       selectedEntityId: entityId,
+      entities: entities || [],
+      entitiesError,
+      entitiesLoading,
+      entityData,
+      entityError,
+      entityLoading,
     }),
     [
       campaigns,
+      campaignsError,
       selectedCampaign,
       updateSelectedCampaign,
       entityTypes,
+      entityTypeError,
       entityType,
       entityId,
+      entities,
+      entitiesError,
+      entitiesLoading,
+      entityData,
+      entityError,
+      entityLoading,
     ]
   );
-  console.log(
-    `kanka context selectedCampaign: ${selectedCampaign}. selectedEntityType: ${entityType}. selectedEntityId: ${
-      entityId
-    }`
-  );
+
   return (
     <KankaContext.Provider value={value}>{children}</KankaContext.Provider>
   );

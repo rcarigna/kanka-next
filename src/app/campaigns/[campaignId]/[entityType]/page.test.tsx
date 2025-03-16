@@ -1,16 +1,10 @@
 import React from 'react';
-import useSwr from 'swr';
 import { KankaContext } from '@/contexts';
 import { mockContext } from '@/__mocks__/constants';
 import { render, screen, waitFor } from '@testing-library/react';
 import Entities from './page';
 import * as api from '../../../../api';
 
-jest.mock('swr');
-const mockUseSWR = (useSwr as jest.Mock).mockReturnValue({
-  data: [{ id: 1, name: 'Character 1', entity_id: 1 }],
-  error: null,
-});
 jest.mock('../../../../components', () => ({
   PageWrapper: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
@@ -61,16 +55,16 @@ describe('Entities Page', () => {
           ...mockContext,
           selectedCampaign: 1,
           selectedEntityType: 'character',
+          entities: [{ id: 1, name: 'Character 1', entity_id: 1 }],
+          entitiesError: null,
         }}
       >
         <Entities />
       </KankaContext.Provider>
     );
-
-    expect(mockUseSWR).toHaveBeenCalledWith(
-      { entityType: 'character', selectedCampaign: 1 },
-      expect.any(Function)
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('entities-panel')).toBeInTheDocument();
+    });
   });
   it('renders loading when entityType is not defined', async () => {
     render(

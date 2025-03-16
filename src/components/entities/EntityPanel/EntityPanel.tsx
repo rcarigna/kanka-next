@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import useSWR from 'swr';
 import {
   Card,
   List,
@@ -10,18 +9,10 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useKankaContext } from '@/contexts';
-import { fetchEntitiesForType } from '@/api';
 
 export const EntityPanel = ({ entityType }: { entityType: string }) => {
-  const { entityTypes, selectedCampaign } = useKankaContext();
-  const {
-    data: entities,
-    isLoading: loading,
-    error,
-  } = useSWR(
-    selectedCampaign ? { entityType, selectedCampaign } : null,
-    fetchEntitiesForType
-  );
+  const { entities, entitiesLoading, entitiesError, entityTypes } =
+    useKankaContext();
 
   if (
     !entityType ||
@@ -37,7 +28,8 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
       </Typography>
     );
   }
-  if (loading) {
+
+  if (entitiesLoading) {
     return (
       <Box>
         <CircularProgress role='progressbar' />
@@ -45,23 +37,25 @@ export const EntityPanel = ({ entityType }: { entityType: string }) => {
       </Box>
     );
   }
-  if (error) {
+
+  if (entitiesError) {
     return (
       <Typography variant='h6' color='error' data-testid='entity-error-message'>
-        {error.message}
+        {entitiesError.message}
       </Typography>
     );
   }
+
   return (
     <Card
       data-testid='entities-panel'
       style={{ paddingLeft: '30px', paddingRight: '30px' }}
     >
-      {entities?.length === 0 ? (
+      {entities.length === 0 ? (
         <Box>No entities of type {entityType} available</Box>
       ) : (
         <List>
-          {entities?.map((entity: any) => (
+          {entities.map((entity: any) => (
             <ListItem key={entity.id}>
               <a href={`./${entityType}/${entity.id}`}>{entity.name}</a>
             </ListItem>

@@ -1,8 +1,7 @@
 'use client';
 import React from 'react';
-import useSWR from 'swr';
+// import useSWR from 'swr';
 import { Card, Box, Typography, CircularProgress } from '@mui/material';
-import { getEntityByID } from '../../../api';
 import { useKankaContext } from '@/contexts';
 
 export const EntityInstance = ({
@@ -12,19 +11,14 @@ export const EntityInstance = ({
   entityType: string;
   id: number;
 }) => {
-  const { selectedCampaign, entityTypes: entityMap } = useKankaContext();
-
   const {
-    data: entity,
-    error,
-    isLoading: loading,
-  } = useSWR(
-    selectedCampaign && entityType && id
-      ? { entityType, selectedCampaign, id }
-      : null,
-    ({ entityType, selectedCampaign, id }) =>
-      getEntityByID(entityType, selectedCampaign, id)
-  );
+    selectedCampaign,
+    entityTypes: entityMap,
+    entityData: entity,
+    entityLoading: loading,
+    entityError: error,
+  } = useKankaContext();
+
   if (!loading && !selectedCampaign) {
     return (
       <Typography
