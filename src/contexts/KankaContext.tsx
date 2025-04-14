@@ -16,7 +16,7 @@ import {
   getEntityTypes,
   fetchEntitiesForType,
   getEntityByID,
-} from '../api/kankaApi';
+} from '../api/kanka/kankaApi';
 import { useRouterContext } from './RouterContext';
 
 export const KankaContext = createContext<KankaContextType | undefined>(

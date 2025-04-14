@@ -6,7 +6,7 @@ import {
   KankaConnectionType,
   ConnectionType,
 } from '../types';
-import { validateConnection } from '../api';
+import { validateConnection } from '../api/kanka';
 
 // initial state: new
 // if loading, status is loading

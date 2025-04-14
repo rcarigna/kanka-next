@@ -1,4 +1,4 @@
-import { EntityType } from "./api/entityMap";
+import { EntityType } from "./api/kanka/entityMap";
 
 export type { EntityType };
 

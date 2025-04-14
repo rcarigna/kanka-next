@@ -1,9 +1,9 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useKankaConnection } from './useKankaConnection';
-import * as api from '../api';
+import * as api from '../api/kanka';
 import { waitFor } from '@testing-library/react';
 
-jest.mock('../api');
+jest.mock('../api/kanka');
 
 describe('useKankaConnection', () => {
   const originalEnv = process.env;

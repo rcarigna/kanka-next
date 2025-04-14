@@ -1,1 +1,1 @@
-export * from './kankaApi';
+export * from './kanka';

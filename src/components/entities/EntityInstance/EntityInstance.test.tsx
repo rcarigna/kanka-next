@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import * as api from '../../../api';
+import * as api from '../../../api/kanka';
 import { EntityInstance } from './EntityInstance';
 import { CharacterEntity } from '../EntityPanel/types';
 import { KankaContext } from '@/contexts';
 import { mockContext } from '@/__mocks__/constants';
-jest.mock('../../../api');
+jest.mock('../../../api/kanka');
 
 describe('EntityInstance', () => {
   const character: CharacterEntity = {

@@ -3,7 +3,7 @@ import { KankaContext } from '@/contexts';
 import { mockContext } from '@/__mocks__/constants';
 import { render, screen, waitFor } from '@testing-library/react';
 import Entities from './page';
-import * as api from '../../../../api';
+import * as api from '../../../../api/kanka';
 
 jest.mock('../../../../components', () => ({
   PageWrapper: ({ children }: { children: React.ReactNode }) => (
@@ -11,7 +11,7 @@ jest.mock('../../../../components', () => ({
   ),
 }));
 
-jest.mock('../../../../api', () => ({
+jest.mock('../../../../api/kanka', () => ({
   fetchEntitiesForType: jest.fn().mockResolvedValue([]),
   fetchEntityMap: jest.fn().mockResolvedValue([]),
 }));
