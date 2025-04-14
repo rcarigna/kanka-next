@@ -1,59 +1,124 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ConnectionStatus } from '../types';
+import { CampaignType, ConnectionStatus } from '../types';
+import { setApiConfig, getApiConfig } from './apiConfig';
 import { commonHeaders } from './constants';
+import { entityMap } from './entityMap';
 
+
+type FetchEntitiesParams = {
+    entityType: string;
+    selectedCampaign?: number;
+};
+
+type GenerateEntityPathParams = {
+    entityType: string;
+    selectedCampaign?: number;
+};
+/**
+ * Validates the connection to the Kanka API.
+ * @param apiKey - The API key for authentication.
+ * @param baseUrl - The base URL of the Kanka API.
+ * @returns The connection status.
+ */
 export const validateConnection = async (
     apiKey: string,
     baseUrl: string
 ): Promise<ConnectionStatus> => {
     try {
+        console.log(`kankaApi: validating api key. apiKey is defined: ${Boolean(apiKey)}, baseUrl: ${baseUrl}`);
+        // @TODO: change to use entitites endpoint
         const response = await fetch(`${baseUrl}/campaigns`, {
             headers: commonHeaders(apiKey),
         });
 
         if (response.ok) {
+            setApiConfig(apiKey, baseUrl);
             return 'valid';
         }
         throw new Error('Invalid API Key or URL');
-    } catch {
+    } catch (error) {
+        console.error('Error validating connection:', error);
+
         return 'invalid';
     }
 };
 
-export const fetchEntity = async (
-    apiKey: string,
-    baseUrl: string,
-    entityType: string
-): Promise<any[]> => {
-    const endpoint = `${baseUrl}/${entityType}`;
-    const response = await fetch(endpoint, {
+
+/**
+ * Fetches the entity map - aka: the Kanka REST API endpoints.
+ * @returns The entity map.
+ */
+export const fetchEntityMap = () => entityMap;
+
+
+/**
+ * Generates the API path for fetching entities of a given type.
+ * @param params - The parameters for generating the entity path.
+ * @returns The API path for fetching entities.
+ */
+export const getEntityPath = ({ entityType, selectedCampaign }: GenerateEntityPathParams): string => {
+    const entity = entityMap.find((entity) => entity.code === entityType);
+    if (!entity) {
+        throw new Error(`Invalid entity type: ${entityType}`);
+    }
+    const { baseUrl } = getApiConfig();
+
+    if (entityType === 'campaigns' || entityType === 'entities') {
+        return `${baseUrl}/${entityType}`;
+    }
+    return `${baseUrl}/campaigns/${selectedCampaign}/${entity.code}s`;
+};
+/**
+ * Fetches all instances of an entity type for the selected campaign with an existing API connection.
+ * @param param0 
+ * @returns 
+ */
+export const fetchEntitiesForType = async ({ entityType, selectedCampaign }: FetchEntitiesParams) => {
+    const { apiKey } = getApiConfig();
+    const path = getEntityPath({ entityType, selectedCampaign });
+    const response = await fetch(path, {
         headers: commonHeaders(apiKey),
     });
-
     if (!response.ok) {
-        throw new Error(`Failed to fetch ${entityType}`);
+        throw new Error(`Failed to fetch entities for type: ${entityType}`);
     }
 
-    const { data } = await response.json();
-    return data;
+    return response.json().then((data) => data.data);
 };
 
-// export const createEntity = async (
-//     apiKey: string,
-//     baseUrl: string,
-//     entityType: string,
-//     entityData: Record<string, any>
-// ): Promise<any> => {
-//     const endpoint = `${baseUrl}/${entityType}`;
-//     const response = await fetch(endpoint, {
-//         method: 'POST',
-//         headers: commonHeaders(apiKey),
-//         body: JSON.stringify(entityData),
-//     });
+/**
+ * Fetches all campaigns with an existing API connection.
+ * @returns 
+ */
+export const getCampaigns = async (): Promise<CampaignType[]> => {
+    console.log(`kankaApi: getCampaigns`);
+    return fetchEntitiesForType({ entityType: 'campaigns' });
+};
 
-//     if (!response.ok) {
-//         throw new Error(`Failed to create ${entityType}`);
-//     }
+/**
+ * Fetches all entities with an existing API connection.
+ * @returns 
+ */
+export const getEntityTypes = async () => {
+    console.log(`kankaApi: getEntityTypes`);
+    return fetchEntityMap();
+};
 
-//     return response.json();
-// };
+/**
+ * Fetches an entity by its type and ID.
+ * @param entityType - The entity type.
+ * @param id - The entity ID.
+ * @returns The entity data.
+ */
+export const getEntityByID = async (entityType: string, campaign: number, id: number): Promise<any> => {
+    console.log(`kankaApi: getEntityByID(${entityType}, ${campaign}, ${id})`);
+    const { apiKey } = getApiConfig();
+    const path = `${getEntityPath({ entityType, selectedCampaign: campaign })}/${id}`;
+    const response = await fetch(path, {
+        headers: commonHeaders(apiKey),
+    });
+    if (!response.ok) {
+        throw new Error(`Failed to fetch entity with id ${id} of type ${entityType}`);
+    }
+    return response.json().then((data) => data.data);
+};

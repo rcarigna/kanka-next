@@ -1,66 +1,139 @@
+'use client';
 import React, {
   createContext,
   useContext,
   ReactNode,
   useState,
+  useMemo,
   useEffect,
   useCallback,
 } from 'react';
-import { CampaignType, KankaContextType } from '../types';
+import useSWR from 'swr';
+import { KankaContextType } from '../types';
 import { useKankaConnection } from '../hooks';
-import { fetchEntity } from '../api';
+import {
+  getCampaigns,
+  getEntityTypes,
+  fetchEntitiesForType,
+  getEntityByID,
+} from '../api/kankaApi';
+import { useRouterContext } from './RouterContext';
 
 export const KankaContext = createContext<KankaContextType | undefined>(
   undefined
 );
 
 export const KankaDataProvider = ({ children }: { children: ReactNode }) => {
-  const kankaConnection = useKankaConnection();
-  const { status, apiKey, baseUrl } = kankaConnection.connection;
+  const { connection } = useKankaConnection();
+  const { status } = connection;
+  const { campaignId, navigateTo, entityType, entityId } = useRouterContext();
+  const [selectedCampaign, setSelectedCampaign] = useState<number | undefined>(
+    campaignId ? Number(campaignId) : undefined
+  );
 
-  const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
+  const { data: campaigns, error: campaignsError } = useSWR(
+    status === 'valid' ? 'campaigns' : null,
+    getCampaigns
+  );
+
+  const { data: entityTypes, error: entityTypeError } = useSWR(
+    selectedCampaign ? ['entityTypes', selectedCampaign] : null,
+    getEntityTypes
+  );
+
+  const fetchEntitiesKey = useMemo(
+    () =>
+      selectedCampaign && entityType ? { entityType, selectedCampaign } : null,
+    [selectedCampaign, entityType]
+  );
+
+  const {
+    data: entities,
+    error: entitiesError,
+    isLoading: entitiesLoading,
+  } = useSWR(fetchEntitiesKey, fetchEntitiesForType);
+
+  const fetchEntityKey = useMemo(
+    () =>
+      selectedCampaign && entityType && entityId
+        ? { entityType, selectedCampaign, entityId }
+        : null,
+    [selectedCampaign, entityType, entityId]
+  );
+  const {
+    data: entityData,
+    error: entityError,
+    isLoading: entityLoading,
+  } = useSWR(fetchEntityKey, getEntityByID);
+  useEffect(() => {
+    if (entityTypes && selectedCampaign) {
+      entityTypes.forEach((entityType) => {
+        if (['campaigns', 'entities'].includes(entityType.code)) {
+          entityType.sitePath = `/${entityType.code}`;
+        } else {
+          entityType.sitePath = `/campaigns/${selectedCampaign}/${entityType.code}`;
+        }
+      });
+    }
+  }, [entityTypes, selectedCampaign]);
 
   useEffect(() => {
-    const loadCampaignOptions = async () => {
-      if (status === 'valid' && apiKey && baseUrl) {
-        try {
-          const data = await fetchEntity(apiKey, baseUrl, 'campaigns');
-          setCampaigns(data);
-        } catch (err) {
-          console.error('Error fetching campaigns:', err);
-        }
-      }
-    };
+    if (campaignsError) {
+      console.error(campaignsError);
+    }
+    if (entityTypeError) {
+      console.error(entityTypeError);
+    }
+    if (entitiesError) {
+      console.error(entitiesError);
+    }
+  }, [campaignsError, entityTypeError, entitiesError]);
 
-    loadCampaignOptions();
-  }, [status, apiKey, baseUrl]);
-
-  // Wrapper for fetching entities
-  const fetchEntityWrapper = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async (entityType: string, save: (data: any[]) => void) => {
-      if (status === 'valid' && apiKey && baseUrl) {
-        try {
-          const data = await fetchEntity(apiKey, baseUrl, entityType);
-          save(data);
-        } catch (err) {
-          console.error(`Error fetching ${entityType}:`, err);
-        }
-      }
+  const updateSelectedCampaign = useCallback(
+    (value: number | undefined) => {
+      setSelectedCampaign(value);
+      navigateTo(value ? `/campaigns/${value}` : '/');
     },
-    [status, apiKey, baseUrl]
+    [navigateTo]
+  );
+
+  const value = useMemo(
+    () => ({
+      campaigns: campaigns || [],
+      campaignsError,
+      selectedCampaign,
+      setSelectedCampaign: updateSelectedCampaign,
+      entityTypes: entityTypes || [],
+      entityTypeError,
+      selectedEntityType: entityType,
+      selectedEntityId: entityId,
+      entities: entities || [],
+      entitiesError,
+      entitiesLoading,
+      entityData,
+      entityError,
+      entityLoading,
+    }),
+    [
+      campaigns,
+      campaignsError,
+      selectedCampaign,
+      updateSelectedCampaign,
+      entityTypes,
+      entityTypeError,
+      entityType,
+      entityId,
+      entities,
+      entitiesError,
+      entitiesLoading,
+      entityData,
+      entityError,
+      entityLoading,
+    ]
   );
 
   return (
-    <KankaContext.Provider
-      value={{
-        connection: kankaConnection,
-        campaigns: campaigns,
-        fetchEntity: fetchEntityWrapper,
-      }}
-    >
-      {children}
-    </KankaContext.Provider>
+    <KankaContext.Provider value={value}>{children}</KankaContext.Provider>
   );
 };
 

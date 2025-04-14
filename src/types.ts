@@ -1,13 +1,17 @@
+import { EntityType } from "./api/entityMap";
+
+export type { EntityType };
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type CampaignType = {
     id: number;
     name: string;
-    locale: string;
+    locale: string | null;
     entry: string;
     entry_parsed: string;
-    image: string;
-    image_full: string;
-    image_thumb: string;
+    image: string | null;
+    image_full: string | null;
+    image_thumb: string | null;
     visibility: string;
     visibility_id: number;
     created_at: string;
@@ -21,9 +25,18 @@ export type KankaItem = {
 };
 
 export type KankaContextType = {
-    connection: KankaConnectionType;
-    campaigns?: CampaignType[];
-    fetchEntity: (entityType: string, save: (data: any[]) => void) => void;
+    campaigns: CampaignType[];
+    selectedCampaign?: number;
+    setSelectedCampaign: (value: number | undefined) => void;
+    entityTypes: EntityType[];
+    selectedEntityType: string | string[] | null;
+    selectedEntityId: string | string[] | null;
+    entityData: any | null;
+    entityError: any | null;
+    entityLoading: boolean | null;
+    entities: any | null;
+    entitiesError: any | null;
+    entitiesLoading: boolean | null,
 };
 
 
@@ -50,7 +63,7 @@ export type KankaConnectionType = {
 };
 
 
-export type ConnectionStatus = 'loading' | 'valid' | 'invalid' | 'apiKeyMissing';
+export type ConnectionStatus = 'new' | 'loading' | 'valid' | 'invalid' | 'apiKeyMissing';
 
 export type fetchFromEndpointType = {
     status: ConnectionStatus;

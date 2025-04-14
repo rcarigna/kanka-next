@@ -1,7 +1,7 @@
-import { Paper } from '@mui/material';
+import { Paper, Box } from '@mui/material';
 import styled from 'styled-components';
 
-export const StyledCTAs = styled.div`
+export const StyledCTAs = styled(Box)`
   display: flex;
   flex-direction: column;
   a {
@@ -27,14 +27,14 @@ export const StyledCTAs = styled.div`
   }
 `;
 
-export const StyledKeyFooter = styled.div`
+export const StyledKeyFooter = styled(Box)`
   display: flex;
   flex: 1;
   flex-direction: column;
   margin-top: 4px;
   gap: 4px;
 `;
-export const StyledHelperLink = styled.div`
+export const StyledHelperLink = styled(Box)`
   display: flex;
   align-content: start;
   flex-direction: row;
